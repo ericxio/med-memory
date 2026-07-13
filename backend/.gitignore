@@ -10,6 +10,8 @@ dist/
 .env
 instructions/
 
+testinggrounds/
+
 # Compiled Java class files
 *.class
 
@@ -53,4 +55,6 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+test.py
 
