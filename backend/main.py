@@ -8,6 +8,12 @@ app = FastAPI()
 
 from upload.router import router as uploadrouter
 
+
+
+from upload.service import uploaddirchecker
+
+uploaddirchecker()
+
 app.include_router(uploadrouter)
 
 
@@ -21,18 +27,7 @@ def read_root():
 
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
 
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
-
-
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
+app.mount("/", StaticFiles(directory="../frontend", html=True), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

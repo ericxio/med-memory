@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
-import service
-
+from . import service
 router = APIRouter()
 
 

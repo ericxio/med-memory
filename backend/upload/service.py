@@ -6,6 +6,8 @@ from pathlib import Path
 validextensions = ['.png','.jpg','.jpeg','.gif','.bmp','.tif','.tiff','.webp']
 uploaddir = Path("uploads")
 
+
+
 def validate(file): #
 
     if '.' not in file: return False
@@ -18,7 +20,7 @@ def validate(file): #
 
 
 def uploaddirchecker():
-    if not os.path.isdir("upload"): os.mkdir("upload")
+    if not os.path.isdir("uploads"): os.mkdir("uploads")
 
 
 def idgenerator(filename) :
@@ -39,7 +41,7 @@ def save(file, name):
 
 
 
-
+#uploaddirchecker()
 
 
 
