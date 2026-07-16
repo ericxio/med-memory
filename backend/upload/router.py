@@ -9,7 +9,7 @@ router = APIRouter()
 async def upload(file: UploadFile = File(...)):
 
     try:
-        service.save(file.file, file.filename)
+        fileid = service.save(file.file, file.filename)
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -17,8 +17,8 @@ async def upload(file: UploadFile = File(...)):
 
 
 
-    json = {"fileid": file.filename, "message": "success"}
+    json = {"fileid": fileid, "message": "success"}
 
-    return str(json)
+    return json
 
 
