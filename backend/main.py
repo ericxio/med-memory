@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 from upload.router import router as uploadrouter
+from ocr.router import router as ocrrouter
 
 
 
@@ -17,6 +18,8 @@ from upload.service import uploaddirchecker
 uploaddirchecker()
 
 app.include_router(uploadrouter)
+app.include_router(ocrrouter)
+
 
 
 
@@ -34,5 +37,7 @@ app.mount("/uploads", StaticFiles(directory=uploaddir), name="uploads")
 
 
 app.mount("/", StaticFiles(directory="../frontend", html=True), name="static")
+
+print("loading complete")
 
 

@@ -33,7 +33,7 @@ def save(file, name):
     safefilename = idgenerator(name)
     filepath = uploaddir/safefilename
 
-    print("file saved to" + str(filepath))
+    print("file saved to " + str(filepath))
 
 
     with open(filepath, 'wb') as f:

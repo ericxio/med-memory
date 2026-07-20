@@ -2,7 +2,10 @@ import easyocr
 from pathlib import Path
 import os
 
-reader = easyocr.Reader(['en'])
+
+print("loading ocr...")
+reader = easyocr.Reader(['en'], model_storage_directory="./ocrmodels")
+print("loading ocr complete")
 
 def textextracter(imgpath: str):
 
@@ -20,6 +23,11 @@ def textextracter(imgpath: str):
         }
         dlist.append(d)
 
+    if len(dlist) == 0:
+        return [{
+            'text': '',
+            'confidence': 0
+        }]
 
     return dlist
 
@@ -40,4 +48,3 @@ def lowconfidencefilterer(dlist, threshold=0.3):
 
 
 
-print(lowconfidencefilterer(textextracter("test2.png"), 0))
