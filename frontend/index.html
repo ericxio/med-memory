@@ -5,6 +5,7 @@
 <h1>upload image</h1>
 
 
+
 <input type="file" id="photo" accept="image/*" capture="enviornment">
 
 <p></p>
@@ -17,4 +18,24 @@
 
 
 <p id="uploadstatus">...</p>
+
+
+
+<h1> text extraction </h1>
+
+<button id="ocr-button">GET TEXT</button>
+
+
+
+<div id="ocr" style="display:none">
+<br><br>
+<textarea id="ocr-result" rows="10" placeholder="..."></textarea>
+
+<p id="ocr-confidence">confidence: 67%</p>
+
+
+
+</div>
+
+<p id="ocr-status">waiting...</p>
 
