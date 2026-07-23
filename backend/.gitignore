@@ -57,7 +57,5 @@ Thumbs.db
 *.wmv
 
 
-test.bmp
-test2.png
-test.py
+test*
 

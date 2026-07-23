@@ -11,7 +11,7 @@ uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 
 
 
-class ocrrequest(BaseModel):
+class Ocrrequest(BaseModel):
 
     filename: str
     # def __init__(self, json):
@@ -26,7 +26,7 @@ class ocrrequest(BaseModel):
 
 
 @router.post("/api/ocr")
-async def runocr(request: ocrrequest):
+async def runocr(request: Ocrrequest):
 
     filename = request.filename
 
