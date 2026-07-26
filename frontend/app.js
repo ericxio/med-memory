@@ -125,6 +125,17 @@ async function ocrhandler() {
 }
 
 
+function tabswitcher(tab) {
+	const sections = document.querySelectorAll(".myClass");
+	
+	document.querySelectorAll(".section").forEach(element => {
+    element.hidden = false;
+	});
+
+	document.querySelectorAll(".section:not(#"+tab+")").forEach(element => {
+    element.hidden = true;
+	});
+}
 
 
 

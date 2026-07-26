@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
-from database import getconnection
-from cards.models import Createcard, Updatecard
+from backend.database import getconnection
+from .models import Createcard, Updatecard
 
 
 
@@ -9,19 +9,25 @@ def createcard(card):
     time = datetime.now().isoformat()
 
 
-    cur = getconnection()
+    table = getconnection()
+    cur = table.cursor()
     cur.execute(
-        "INSERT INTO medicine_cards (profile_name, product_name, strength, directions, warnings, personal_notes, reminder_times, ocr_text, image_path, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (card.profile_name, card.product_name, card.strength, card.directions, card.warnings, card.personal_notes, card.reminder_times, card.ocr_text, card.image_path, time)
+        "INSERT INTO cards (profile_name, product_name, strength, directions, warnings, personal_notes, reminder_times, ocr_text, image_path, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (card.profile_name, card.product_name, card.strength, card.directions, card.warnings, card.personal_notes, card.reminder_times, card.ocr_text, card.image_path, time, time)
     )
 
 
 
 
-    cur.commit()
+    table.commit()
     id2  = cur.lastrowid
 
-    d = dict(cur.fetchall())
+    cur.execute("SELECT * FROM cards")
+    allresuots = cur.fetchone()
+
+
+
+    d = dict(allresuots)
 
     cur.close()
 
@@ -45,30 +51,34 @@ def createcard(card):
     # }
 
 def getallcards(profile: Optional[str] = None):
+    table = getconnection()
+    cur = table.cursor()
 
-    cur = getconnection()
 
     if profile is None:
-        cur.execute("SELECT * FROM medicine_cards ORDER BY created_at DESC")
+        cur.execute("SELECT * FROM cards ORDER BY created_at DESC")
 
     else:
-        cur.execute("SELECT * FROM medicine_cards WHERE profile_name = ? ORDER BY created_at DESC", (profile,))
+        cur.execute("SELECT * FROM cards WHERE profile_name = ? ORDER BY created_at DESC", (profile,))
 
     results = cur.fetchall()
 
     d = [dict(row) for row in results]
 
-    cur.close()
+    table.close()
 
     return d
 
 
 def getcardbyid(cardid):
-    cur = getconnection()
+    table = getconnection()
+    cur = table.cursor()
 
-    cur.execute("SELECT * FROM medicine_cards WHERE id = ?", (cardid,))
+    cur.execute("SELECT * FROM cards WHERE id = ?", (cardid,))
 
     result = cur.fetchone()
+
+    table.close()
 
     if result is None: return None
 
@@ -88,7 +98,8 @@ def updatecard(cardid, update):
 
     fields["updated_at"] = datetime.now().isoformat()
 
-    cur = getconnection()
+    table = getconnection()
+    cur = table.cursor()
 
 
     for i in fields.keys():
@@ -96,23 +107,26 @@ def updatecard(cardid, update):
         cur.execute("UPDATE cards SET " + i + " = ? WHERE id = ?", (fields[i], cardid))
 
 
-    cur.commit()
+    table.commit()
 
-    d = dict(cur.fetchall())
-
-    cur.close()
+    cur.execute("SELECT * FROM cards WHERE id = ?", (cardid,))
+    d = dict(r for r in cur.fetchall())
+    print(d)
+    table.close()
 
     return d
 
 def deletecard(cardid):
-    cur = getconnection()
+    table = getconnection()
+    cur = table.cursor()
 
-    cur.execute("DELETE FROM medicine_cards WHERE id = ?", (cardid,))
+    cur.execute("DELETE FROM cards WHERE id = ?", (cardid,))
 
     rowcount = cur.rowcount
 
-    cur.commit()
+    table.commit()
 
-    cur.close()
+    table.close()
 
     return rowcount > 0
+
