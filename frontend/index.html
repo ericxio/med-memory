@@ -1,7 +1,11 @@
 <head><link rel="stylesheet" href="style.css">
 <script src="app.js" defer></script></head>
 
+<div id="topbar">
+<button id="topbar-scan">SCAN</button>
+<button id="topbar-cards">CARDS</button>
 
+</div>
 
 <div id="upload-section" class="section">
 
@@ -44,8 +48,49 @@
 
 </div>
 
+
 <div id="cards-section" class="section">
 
 <h1>cards</h1>
+
+<div id="card-list-container">
 </div>
+
+<p id="card-list-empty"></p>
+
+</div>
+
+<div class="section" id="cardform-section" >
+<h2>create card</h2>
+<p id="form-label">profile</p> <input type="text" id="form-profile" required></input>
+
+<p id="form-label">product name</p> <input type="text" id="form-productname" required></input>
+
+<p id="form-label">strength</p> <input type="text" id="form-strength"></input>
+
+
+<p id="form-label">instructions</p>
+<textarea type="text" id="form-instructions" rows="3" resize:vertical></textarea>
+
+<p id="form-label">notes</p>
+<textarea type="text" id="form-notes" rows="3" resize:vertical></textarea>
+
+
+<p id="form-label">ocr text</p>
+<textarea type="text" id="form-ocrtext" rows="3" readonly resize:vertical>...</textarea>
+
+<p id="form-label">time</p> <input type="time" id="form-time"></input>
+
+<input type="text" id="form-imagepath" hidden></input>
+
+<p id="form-status">...</p>
+
+
+
+<button id="form-submit">SUBMIT</button>
+
+<button id="form-cancel">CANCEL</button>
+
+</div>
+
 

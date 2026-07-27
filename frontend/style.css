@@ -96,6 +96,48 @@ cursor:pointer;
     opacity: 0.6;
 }
 
+#form-label {
+    color:#000000;
+   font-size:17px;
+	margin-top: 16px;
+ margin-bottom: 4px;
+}
+
+#form-submit {
+    background-color:#338822;
+	color:white;
+   font-size:30px;
+}
+
+#form-submit:hover {
+
+box-shadow: 0px 0px 20px #33ff22;
+
+}
+
+
+
+#form-cancel {
+    background-color:#cc0000;
+color:white;
+   font-size:30px;
+}
+
+
+#form-cancel:hover {
+    background-color:#cc0000;
+
+box-shadow: 0px 0px 20px #ff0000;
+
+}
+
+#cardform-section {
+max-width: 600px;
+ margin: 0 auto;
+}
+
+
+
 
 body {
 
