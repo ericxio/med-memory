@@ -136,6 +136,44 @@ max-width: 600px;
  margin: 0 auto;
 }
 
+#card-list-container {
+display:flex;
+gap:20px;
+    flex-wrap: wrap;
+
+}
+
+.card-list-item {
+width: 200px;
+height: 250px;
+
+border: 2px solid #0000cc;
+background:#ddddff;
+padding: 10px;
+}
+
+#createnewcard{
+font-size:30px;
+background-color:#22aa66;
+color:#ffffff;
+padding: 4px;
+margin-bottom: 10px;
+}
+
+#createnewcard:hover{
+font-size:30px;
+background-color:#228866;
+color:#ffffff;
+padding: 4px;
+margin-bottom: 10px;
+  transition: background-color 0.2s ease;
+
+}
+
+
+
+
+
 
 
 

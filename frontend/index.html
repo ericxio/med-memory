@@ -53,6 +53,7 @@
 
 <h1>cards</h1>
 
+<button id="createnewcard">CREATE</button>
 <div id="card-list-container">
 </div>
 
@@ -75,6 +76,10 @@
 <p id="form-label">notes</p>
 <textarea type="text" id="form-notes" rows="3" resize:vertical></textarea>
 
+<p id="form-label">warnings</p>
+<textarea type="text" id="form-warnings" rows="2" resize:vertical></textarea>
+
+
 
 <p id="form-label">ocr text</p>
 <textarea type="text" id="form-ocrtext" rows="3" readonly resize:vertical>...</textarea>
@@ -90,6 +95,22 @@
 <button id="form-submit">SUBMIT</button>
 
 <button id="form-cancel">CANCEL</button>
+
+</div>
+
+<div id="card-detail" class="section">
+
+<button id="close-detail"><b>╳</b></button>
+
+<div id="card-detail-content">
+
+</div>
+
+<button id="card-edit">EDIT</button>
+<button id="card-yeet">RECYCLE</button>
+
+<img id="detail-image"> </img>
+
 
 </div>
 
