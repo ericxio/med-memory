@@ -1,5 +1,6 @@
 let currentfileid = null;
 
+let currentcardid = null;
 
 async function uploadhandler() {
 	let input = document.getElementById("photo");
@@ -202,7 +203,7 @@ async function savecard() {
 		  
 	document.getElementById("form-status").innerHTML = "saving..."
 	
-	fetch("/api/cards/" + send.image_path, {
+	fetch("/api/cards/" ,{
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(send)
@@ -245,6 +246,20 @@ async function showcardlist() {
 		for (let i of cards) {
 			container.innerHTML += rendercard(i);
 			
+			
+
+			
+		}
+		
+		for (let i of cards) {
+			let e = "card-list-"+i.id;
+
+			
+			document.getElementById(e).addEventListener("click", () => {
+				showcarddetail(i.id)
+				})
+
+			
 		}
 	}
 	
@@ -255,7 +270,7 @@ async function showcardlist() {
 function rendercard(card) {
 	let html = "";
 	
-	html += "<div class=\"card-list-item\" onclick=showcard("+card+")>";
+	html += "<div class=\"card-list-item\" id=\"card-list-"+card.id+"\">";
 	html += "<h1>" + card.product_name + "</h1>";
 		html += "<p>" + card.profile_name + "</p>";
 
@@ -263,7 +278,12 @@ function rendercard(card) {
 	
 	html += "</div>";
 	
+	//console.log(html);
+	//	console.log("card-list-"+card.id);
+
 	
+
+
 	
 	return html;
 }
@@ -271,20 +291,20 @@ function rendercard(card) {
 
 	
 async function showcarddetail(cardid) {
+	currentcardid = cardid;
 	tabswitcher2("card-detail");
 	try{
-		let data = await fetch("/api/cards/"
-              
-             
-          )
+		let data = await fetch(`/api/cards/${cardid}`);
 		  
 	card = await data.json();
+	console.log(card);
 	
 	rendercarddetail(card);
+	
 	}
 	
 	catch(e) {
-		return;
+		return e;
 	}
 	
 	
@@ -293,19 +313,25 @@ async function showcarddetail(cardid) {
 }
 
 function rendercarddetail(card) {
-	document.getElementById("card-detail").innerHTML = 
-	`<h2>${card.product_name}</h2>
-	<p>strength: ${card.strength}</p>
+	console.log(card);
+	let html = 	`<input id="detail-name" value="${card.product_name}" readonly></input>
+	<input id="detail-strength" value = ${card.strength} readonly></input>
 	
-     <p>${card.directions || "[no instructions]"}</p>
-	 <p>notes: ${card.personal_notes}</p>
-	 <p>warnings: ${card.warnings}</p>
-	 <p>time: ${card.reminder_times}</p>
+     <textarea id="detail-instructions" value="${card.directions || "[no instructions]"}" rows="3" readonly></textarea>
+	<textarea id="detail-notes" value = "${card.notes}" rows="3" readonly></textarea>
+	<input id="detail-warnings" value = "${card.warnings}" rows="2" readonly></input>
+	<input id="detail-time" type="time" value = "${card.time}" readonly></input>
+	
+	 
+	 
 	 `
+	 
+	 document.getElementById("card-detail-content").innerHTML = html; 
+
 	 
 	 if (card.image_path != null) {
 		 document.getElementById("detail-image").hidden = false;
-		 document.getElementById("detail-image").src = card.image_path;
+		 document.getElementById("detail-image").src = "/uploads/"+card.image_path;
 	 }
 	 
 	 else {
@@ -332,23 +358,61 @@ function editcard() {
 	
 }
 
-async function editcard(cardid) {
-	let profile = 	document.getElementById("form-profile").value;
-	let productname = document.getElementById("form-productname").value;
-	let strength = document.getElementById("form-strength").value;
-	let instructions  = document.getElementById("form-instructions").value;
-	let notes = document.getElementById("form-notes").value;
-	let time = document.getElementById("form-time").value;
-	let warnings = document.getElementById("form-warnings").value;
+function editcard() {
+	let inputlist = ["notes", "warnings", "instructions", "strength", "name", "time"];
 	
-	if (profile == "" || productname == "") {
-		document.getElementById("form-status").innerHTML = "error: profile or product name missing";
+		for (let i of inputlist ) {
+			document.getElementById("detail-"+i).readOnly=false;
+
+			//console.log(i);
+	
+	}
+	
+	document.getElementById("edit-submit").style.display = "";
+	document.getElementById("edit-cancel").style.display = "";
+	document.getElementById("card-edit").style.display = "none";
+	document.getElementById("card-yeet").style.display = "none";
+	
+}
+
+function canceledit() {
+	let inputlist = ["notes", "warnings", "instructions", "strength", "name", "time"];
+	
+		for (let i of inputlist ) {
+			document.getElementById("detail-"+i).readOnly=true;
+
+			//console.log(i);
+	
+	}
+	
+	document.getElementById("edit-submit").style.display = "none";
+	document.getElementById("edit-cancel").style.display = "none";
+	document.getElementById("card-edit").style.display = "";
+	document.getElementById("card-yeet").style.display = "";
+	
+}
+
+
+
+async function submitedit() {
+	
+	
+	//let profile = 	document.getElementById("form-profile").value;
+	let productname = document.getElementById("detail-name").value;
+	let strength = document.getElementById("detail-strength").value;
+	let instructions  = document.getElementById("detail-instructions").value;
+	let notes = document.getElementById("detail-notes").value;
+	let time = document.getElementById("detail-time").value;
+	let warnings = document.getElementById("detail-warnings").value;
+	
+	if (productname == "") {
+		//document.getElementById("form-status").innerHTML = "error: profile or product name missing";
 		
 		return;
 	}
 	
 	let send = {
-              profile_name: profile,
+              //profile_name: profile,
               product_name: productname,
               strength: strength,    
               directions: instructions,
@@ -359,27 +423,27 @@ async function editcard(cardid) {
               image_path: document.getElementById("form-imagepath").value
           }
 		  
-	document.getElementById("form-status").innerHTML = "saving..."
+	//document.getElementById("form-status").innerHTML = "saving..."
 	
-	fetch(`/api/cards/${cardid}` + send.image_path, {
-              method: "POST",
+	fetch(`/api/cards/${currentcardid}`, {
+              method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(send)
           })
 		  
-	document.getElementById("form-status").innerHTML = "card saved";
+	//document.getElementById("form-status").innerHTML = "card saved";
 	
 	
-	
+	canceledit();
 
 
 
 }
 
-async function deletecard(cardid) {
+async function deletecard() {
 	if (!confirm("are you sure you want to recycle this card")) return;
 	
-	fetch(`/api/cards/${cardid}`, { method: "DELETE" })
+	fetch(`/api/cards/${currentcardid}`, { method: "DELETE" })
 	
 	showcardlist();
 	
@@ -406,10 +470,12 @@ document.getElementById("form-cancel").addEventListener("click", cancelform);
 
 document.getElementById("createnewcard").addEventListener("click", showcardform);
 
- document.getElementById("close-detail").addEventListener("click", showcardlist)
+ document.getElementById("close-detail").addEventListener("click", () => {showcardlist;canceledit})
  document.getElementById("card-edit").addEventListener("click", editcard)
- document.getElementById("card-yeet").addEventListener("click", deletecard)
+ document.getElementById("card-yeet").addEventListener("click", () => {deletecard;canceledit})
 
 
+document.getElementById("edit-submit").addEventListener("click", submitedit);
+document.getElementById("edit-cancel").addEventListener("click", canceledit);
 
 

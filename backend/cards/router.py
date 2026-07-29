@@ -18,8 +18,8 @@ async def listcards():
 
     return result
 
-@router.get("/{card_id}", response_model=Cardresponce)
-async def getcard(cardid):
+@router.get("/{cardid}", response_model=Cardresponce)
+async def getcard(cardid: int):
     result = service.getcardbyid(cardid)
 
     if result is None:
@@ -27,7 +27,7 @@ async def getcard(cardid):
 
     return result
 
-@router.put("/{card_id}", response_model=Cardresponce)
+@router.put("/{cardid}", response_model=Cardresponce)
 async def updatecard(cardid: int, updates: Updatecard):
     result = service.updatecard(cardid, updates)
     if result is None:
@@ -36,7 +36,7 @@ async def updatecard(cardid: int, updates: Updatecard):
     return result
 
 
-@router.delete("/{card_id}")
+@router.delete("/{cardid}")
 async def deletecard(cardid: int):
     result = service.deletecard(cardid)
 
