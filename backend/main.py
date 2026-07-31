@@ -21,6 +21,8 @@ from backend.cards.router import router as cardrouter
 
 from upload.service import uploaddirchecker
 
+from backend.llm.router import router as llm_router
+
 
 
 uploaddirchecker()
@@ -28,6 +30,8 @@ uploaddirchecker()
 app.include_router(uploadrouter)
 app.include_router(ocrrouter)
 app.include_router(cardrouter)
+app.include_router(llm_router)
+
 
 
 
