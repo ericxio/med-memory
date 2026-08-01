@@ -171,8 +171,31 @@ margin-bottom: 10px;
 }
 
 
+#autocreatenewcard {
+font-size:20px;
+background-color:#22aabb;
+color:#ffffff;
+padding: 4px;
+margin-bottom: 10px;
+}
+
+#autocreatenewcard:hover {
+font-size:20px;
+background-color:#2288aa;
+padding: 4px;
+margin-bottom: 10px;
+  transition: background-color 0.2s ease;
+
+}
 
 
+#autocreatenewcard:disabled {
+background-color:#7f7f7f;
+
+cursor: not-allowed;
+opacity:0.6;
+
+}
 
 
 

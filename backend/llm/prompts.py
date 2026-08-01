@@ -11,6 +11,7 @@ Rules:
 - The "simple_explanation" field should be a short, plain-language 
   sentence explaining how to take the medicine, suitable for 
   an elderly person. Base it only on the directions found in the text.
+- do not write in all caps unless when neccesary
 """
 
 

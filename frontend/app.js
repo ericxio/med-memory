@@ -452,6 +452,45 @@ async function deletecard() {
 	
 	
 }
+
+async function handleautofill() {
+	const ocrtext = document.getElementById("ocr-result").value;
+	document.getElementById("autocreatenewcard").disabled = true;
+	document.getElementById("autocreatenewcard").innerHTML = "PROCESSING...";
+	
+	try {
+	   let data =  await  fetch("/api/structure-label", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ocr_text: ocrtext })
+          })
+		  
+		 let result = await data.json();
+		 
+		 showcardform();
+		 
+	//document.getElementById("form-profile").value = result.;
+	document.getElementById("form-productname").value = result.product_name;
+	document.getElementById("form-strength").value = result.strength;
+	document.getElementById("form-instructions").value = result.directions;
+	//document.getElementById("form-notes").value = result.personal_notes;
+	//document.getElementById("form-time").value;
+	document.getElementById("form-warnings").value = result.warnings;
+	}
+	
+	catch(e) {
+		console.log("error: " +e);
+	}
+	
+	finally {document.getElementById("autocreatenewcard").disabled = false;
+		document.getElementById("autocreatenewcard").innerHTML = "AUTOFILL CARD";
+}
+	
+	document.getElementById("autocreatenewcard").addEventListener("click", handleautofill)
+
+
+
+}
 	
 
 tabswitcher("upload")
@@ -478,4 +517,5 @@ document.getElementById("createnewcard").addEventListener("click", showcardform)
 document.getElementById("edit-submit").addEventListener("click", submitedit);
 document.getElementById("edit-cancel").addEventListener("click", canceledit);
 
+	document.getElementById("autocreatenewcard").addEventListener("click", handleautofill)
 
