@@ -292,7 +292,11 @@ function rendercard(card) {
 	
 async function showcarddetail(cardid) {
 	currentcardid = cardid;
-	tabswitcher2("card-detail");
+	document.getElementById("overlay").style.display="block";
+	document.getElementById("card-detail").style.display="block";
+	document.getElementById("card-detail").hidden=false;
+	
+
 	try{
 		let data = await fetch(`/api/cards/${cardid}`);
 		  
@@ -492,6 +496,11 @@ async function handleautofill() {
 
 }
 	
+function closedetail() {
+	document.getElementById("overlay").style.display="none";
+	document.getElementById("card-detail").style.display="none";
+	
+}
 
 tabswitcher("upload")
 
@@ -509,7 +518,7 @@ document.getElementById("form-cancel").addEventListener("click", cancelform);
 
 document.getElementById("createnewcard").addEventListener("click", showcardform);
 
- document.getElementById("close-detail").addEventListener("click", () => {showcardlist;canceledit})
+ document.getElementById("close-detail").addEventListener("click", closedetail)
  document.getElementById("card-edit").addEventListener("click", editcard)
  document.getElementById("card-yeet").addEventListener("click", () => {deletecard;canceledit})
 

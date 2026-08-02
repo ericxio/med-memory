@@ -1,206 +1,198 @@
-#uploader-button {
-
-font-size:40px;
-padding: 20px 400px;
-background-color:#cc0000;
-color:#ffffff;
-cursor:pointer;
-
+#uploader-button  {
+  font-size:40px;
+  padding: 20px 400px;
+  background-color:#cc0000;
+  color:#ffffff;
+  cursor:pointer;
 }
 
-#uploader-button:hover {
-
-font-size:40px;
-padding: 20px 400px;
-background-color:#ff2000;
-color:#ffffff;
-cursor:pointer;
-    transition: background-color 0.2s ease;
-
-
-}
-
-
-#preview {
-max-width: 100%;
- max-height: 400px;
-border-radius: 20px;
-margin-top: 30px
-}
-
-#uploadstatus {
-
-font-size:19px;
-
-background-color:#0000cc;
-color:#ffffff;
-
-}
-
-
-
-#photo {
-
-font-size:10px;
-
-background-color:#000000;
-color:#ffffff;
-
-}
-
-#ocr-button {
-font-size:20px;
-padding: 10px 50px;
-background-color:#cc5500;
-color:#ffffff;
-
-}
-
-#ocr-button:hover {
-background-color:#cc7700;
-    transition: background-color 0.2s ease;
-
-
-}
-
-#ocr-result {
-font-size:16px;
-padding: 5px 5px;
-background-color:#ffeeee;
-color:#000022;
-cursor:pointer;
-font-family: consolas;
-resize:vertical;
-
-
-}
-
-#ocr-confidence {
-font-size:20px;
-color:#000022;
-cursor:pointer;
-
-}
-
-#ocr-status {
-font-size:20px;
-color:#000022;
-cursor:pointer;
-
-}
-
-#ocr-button:disabled {
-    background-color: #7f7f7f;
-    color: white;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-#form-label {
-    color:#000000;
-   font-size:17px;
-	margin-top: 16px;
- margin-bottom: 4px;
-}
-
-#form-submit {
-    background-color:#338822;
-	color:white;
-   font-size:30px;
-}
-
-#form-submit:hover {
-
-box-shadow: 0px 0px 20px #33ff22;
-
-}
-
-
-
-#form-cancel {
-    background-color:#cc0000;
-color:white;
-   font-size:30px;
-}
-
-
-#form-cancel:hover {
-    background-color:#cc0000;
-
-box-shadow: 0px 0px 20px #ff0000;
-
-}
-
-#cardform-section {
-max-width: 600px;
- margin: 0 auto;
-}
-
-#card-list-container {
-display:flex;
-gap:20px;
-    flex-wrap: wrap;
-
-}
-
-.card-list-item {
-width: 200px;
-height: 250px;
-
-border: 2px solid #0000cc;
-background:#ddddff;
-padding: 10px;
-}
-
-#createnewcard{
-font-size:30px;
-background-color:#22aa66;
-color:#ffffff;
-padding: 4px;
-margin-bottom: 10px;
-}
-
-#createnewcard:hover{
-font-size:30px;
-background-color:#228866;
-color:#ffffff;
-padding: 4px;
-margin-bottom: 10px;
+#uploader-button:hover  {
+  font-size:40px;
+  padding: 20px 400px;
+  background-color:#ff2000;
+  color:#ffffff;
+  cursor:pointer;
   transition: background-color 0.2s ease;
-
 }
 
+#preview  {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 20px;
+margin-top: 30px }
 
-#autocreatenewcard {
-font-size:20px;
-background-color:#22aabb;
-color:#ffffff;
-padding: 4px;
-margin-bottom: 10px;
+#uploadstatus  {
+  font-size:19px;
+  background-color:#0000cc;
+  color:#ffffff;
 }
 
-#autocreatenewcard:hover {
-font-size:20px;
-background-color:#2288aa;
-padding: 4px;
-margin-bottom: 10px;
+#photo  {
+  font-size:10px;
+  background-color:#000000;
+  color:#ffffff;
+}
+
+#ocr-button  {
+  font-size:20px;
+  padding: 10px 50px;
+  background-color:#cc5500;
+  color:#ffffff;
+}
+
+#ocr-button:hover  {
+  background-color:#cc7700;
   transition: background-color 0.2s ease;
+}
+
+#ocr-result  {
+  font-size:16px;
+  padding: 5px 5px;
+  background-color:#ffeeee;
+  color:#000022;
+  cursor:pointer;
+  font-family: consolas;
+  resize:vertical;
+}
+
+#ocr-confidence  {
+  font-size:20px;
+  color:#000022;
+  cursor:pointer;
+}
+
+#ocr-status  {
+  font-size:20px;
+  color:#000022;
+  cursor:pointer;
+}
+
+#ocr-button:disabled  {
+  background-color: #7f7f7f;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#form-label  {
+  color:#000000;
+  font-size:17px;
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+#form-submit  {
+  background-color:#338822;
+  color:white;
+  font-size:30px;
+}
+
+#form-submit:hover  {
+  box-shadow: 0px 0px 20px #33ff22;
+}
+
+#form-cancel  {
+  background-color:#cc0000;
+  color:white;
+  font-size:30px;
+}
+
+#form-cancel:hover  {
+  background-color:#cc0000;
+  box-shadow: 0px 0px 20px #ff0000;
+}
+
+#cardform-section  {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#card-list-container  {
+  display:flex;
+  gap:20px;
+  flex-wrap: wrap;
+}
+
+.card-list-item  {
+  width: 200px;
+  height: 250px;
+  border: 2px solid #0000cc;
+  background:#ddddff;
+  padding: 10px;
+}
+
+#createnewcard {
+  font-size:30px;
+  background-color:#22aa66;
+  color:#ffffff;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+
+#createnewcard:hover {
+  font-size:30px;
+  background-color:#228866;
+  color:#ffffff;
+  padding: 4px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease;
+}
+
+#autocreatenewcard  {
+  font-size:20px;
+  background-color:#22aabb;
+  color:#ffffff;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+
+#autocreatenewcard:hover  {
+  font-size:20px;
+  background-color:#2288aa;
+  padding: 4px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease;
+}
+
+#autocreatenewcard:disabled  {
+  background-color:#7f7f7f;
+  cursor: not-allowed;
+  opacity:0.6;
+}
+
+#card-detail {
+	position:fixed;
+	background-color:#eeeeff;
+	z-index:999999;
+	margin: 0 auto;
+	width:1000px;
+	left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+	max-width:80vw;
+
 
 }
 
+#overlay {
+	background-color: rgba(0,0,0,0.5);
+	width:100%;
+	height:100%;
+	position:fixed;
+	z-index:999998;
+	    justify-content: center;
+    align-items: center;
+	top:0;
+	left:0;
 
-#autocreatenewcard:disabled {
-background-color:#7f7f7f;
-
-cursor: not-allowed;
-opacity:0.6;
 
 }
 
+body  {
+  background:#ffffee;
 
+  
+}
 
-
-body {
-
-background:#ffffee;
+html {
 }
