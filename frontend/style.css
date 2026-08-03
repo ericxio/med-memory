@@ -138,6 +138,23 @@ margin-top: 30px }
   transition: background-color 0.2s ease;
 }
 
+#createnewcard2 {
+  font-size:30px;
+  background-color:#22aa66;
+  color:#ffffff;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+
+#createnewcard2:hover {
+  font-size:30px;
+  background-color:#228866;
+  color:#ffffff;
+  padding: 4px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease;
+}
+
 #autocreatenewcard  {
   font-size:20px;
   background-color:#22aabb;
@@ -174,6 +191,28 @@ margin-top: 30px }
 
 }
 
+#card-detail-2 {
+		padding: 4px;
+}
+
+
+#close-detail {
+	background-color:#dd0000;
+	color:#ffffff;
+	border:none;
+	box-shadow: 0px 0px 10px #ff0000;
+	
+}
+
+#close-detail:hover {
+	background-color:#ff0000;
+	transition:background-color 0.2s ease;
+	
+	
+}
+
+
+
 #overlay {
 	background-color: rgba(0,0,0,0.5);
 	width:100%;
@@ -188,11 +227,87 @@ margin-top: 30px }
 
 }
 
+.card {
+	max-width:700px;
+	margin: 0 auto;
+	padding: var(--spacing-card-padding);
+    background: var(--color-card-bg);
+    border-radius: var(--border-radius);
+    /*box-shadow: 4px 4px 8px rgba(0,0,0,0.2);*/
+    color: var(--color-text);
+    line-height: 1.6;
+
+}
+
+.card-image {
+	max-width:200px;
+	max-height:250px;
+	margin: 0 var(--spacing-section) auto;
+	border-radius: var(--border-radius);
+	object-fit: contain;
+	border: 2px solid var(--color-border);
+}
+
+.card-name {
+	font-size: var(--font-size-xxl);
+	font-weight: 666;
+    color: var(--color-text);
+    margin-bottom: 4px;
+    letter-spacing: 0.1px;
+	border:none;
+	background:transparent;
+}
+
+.card-divider { ... }
+    
+    border: none;
+    border-top: 2px solid var(--color-border);
+    margin: var(--spacing-section) 0;
+    
+
+
 body  {
   background:#ffffee;
 
   
 }
 
-html {
+:root {
+    --color-text: #111111;
+
+    --color-bg: #ffffee;
+
+    --color-card-bg: #eeeeff;
+
+    --color-primary: #1d4ed8;
+
+    --color-warning: #b91c1c;
+    --color-warning-bg: #fef2f2;
+
+    --color-notes-bg: #eff6ff;
+    --color-notes-border: #93c5fd;
+
+    --color-reminder: #15803d;
+    --color-reminder-bg: #f0fdf4;
+
+    --color-muted: #4b5563;
+
+    --color-border: #e5e7eb;
+
+    --font-size-mega: 36px;
+    --font-size-super: 28px;
+    --font-size-xxl: 24px;
+	--font-size-xl: 20px;
+    --font-size-large: 16px;
+    --font-size-medium: 14px;
+	--font-size-small: 12px;
+	--font-size-tiny: 10px;
+	--font-size-fineprint: 6px;
+	--font-size-finerprint: 2px;
+	
+	
+
+    --spacing-section: 28px;
+    --spacing-card-padding: 32px;
+    --border-radius: 12px;
 }

@@ -110,7 +110,8 @@ def updatecard(cardid, update):
     table.commit()
 
     cur.execute("SELECT * FROM cards WHERE id = ?", (cardid,))
-    d = dict(r for r in cur.fetchall())
+
+    d = dict(cur.fetchone())
     print(d)
     table.close()
 

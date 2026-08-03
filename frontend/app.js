@@ -159,6 +159,8 @@ function tabswitcher2(tab) {
 function showcardform() {
 	tabswitcher("cardform")
 	
+	console.log("showing card form");
+	
 	//document.getElementById("form-ocrtext").value = document.getElementById("ocr-result").value;
 	
 	document.getElementById("form-profile").value = "";
@@ -318,13 +320,13 @@ async function showcarddetail(cardid) {
 
 function rendercarddetail(card) {
 	console.log(card);
-	let html = 	`<input id="detail-name" value="${card.product_name}" readonly></input>
+	let html = 	`<input id="detail-name" class="card-name" value="${card.product_name}" readonly></input>
 	<input id="detail-strength" value = ${card.strength} readonly></input>
 	
-     <textarea id="detail-instructions" value="${card.directions || "[no instructions]"}" rows="3" readonly></textarea>
-	<textarea id="detail-notes" value = "${card.notes}" rows="3" readonly></textarea>
-	<input id="detail-warnings" value = "${card.warnings}" rows="2" readonly></input>
-	<input id="detail-time" type="time" value = "${card.time}" readonly></input>
+     <textarea id="detail-instructions"  rows="3" readonly>${card.directions || "[no instructions]"}</textarea>
+	<textarea id="detail-notes" rows="3" readonly>${card.personal_notes}</textarea>
+	<textarea id="detail-warnings"  rows="2" readonly>${card.warnings}</textarea>
+	<input id="detail-time" type="time" value = "${card.reminder_times}" readonly></input>
 	
 	 
 	 
@@ -344,7 +346,7 @@ function rendercarddetail(card) {
 	 }
 }
 
-function editcard() {
+function editcard2() { //unused
 	tabswitcher("cardform")
 	
 	//document.getElementById("form-ocrtext").value = document.getElementById("ocr-result").value;
@@ -391,8 +393,8 @@ function canceledit() {
 	
 	document.getElementById("edit-submit").style.display = "none";
 	document.getElementById("edit-cancel").style.display = "none";
-	document.getElementById("card-edit").style.display = "";
-	document.getElementById("card-yeet").style.display = "";
+	document.getElementById("card-edit").style.display = "block";
+	document.getElementById("card-yeet").style.display = "block";
 	
 }
 
@@ -426,6 +428,8 @@ async function submitedit() {
               ocr_text: document.getElementById("form-ocrtext").value,
               image_path: document.getElementById("form-imagepath").value
           }
+		  
+		  console.log(send);
 		  
 	//document.getElementById("form-status").innerHTML = "saving..."
 	
@@ -517,14 +521,17 @@ document.getElementById("form-submit").addEventListener("click", savecard);
 document.getElementById("form-cancel").addEventListener("click", cancelform);
 
 document.getElementById("createnewcard").addEventListener("click", showcardform);
-
- document.getElementById("close-detail").addEventListener("click", closedetail)
- document.getElementById("card-edit").addEventListener("click", editcard)
- document.getElementById("card-yeet").addEventListener("click", () => {deletecard;canceledit})
+document.getElementById("createnewcard2").addEventListener("click", showcardform);
 
 
-document.getElementById("edit-submit").addEventListener("click", submitedit);
+ document.getElementById("close-detail").addEventListener("click", closedetail);
+ document.getElementById("card-edit").addEventListener("click", editcard);
+ document.getElementById("card-yeet").addEventListener("click", () => {deletecard();canceledit();closedetail()});
+
+
+document.getElementById("edit-submit").addEventListener("click", () => {submitedit();showcardlist()});
 document.getElementById("edit-cancel").addEventListener("click", canceledit);
 
 	document.getElementById("autocreatenewcard").addEventListener("click", handleautofill)
 
+console.log("event listeners have fired")
