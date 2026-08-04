@@ -321,11 +321,11 @@ async function showcarddetail(cardid) {
 function rendercarddetail(card) {
 	console.log(card);
 	let html = 	`<input id="detail-name" class="card-name" value="${card.product_name}" readonly></input>
-	<input id="detail-strength" value = ${card.strength} readonly></input>
+	<input id="detail-strength"  class="card-volatile" value = "${card.strength}" readonly></input>
 	
-     <textarea id="detail-instructions"  rows="3" readonly>${card.directions || "[no instructions]"}</textarea>
-	<textarea id="detail-notes" rows="3" readonly>${card.personal_notes}</textarea>
-	<textarea id="detail-warnings"  rows="2" readonly>${card.warnings}</textarea>
+     <textarea id="detail-instructions" class="card-instructions" rows="3" readonly>${card.directions || "[no instructions]"}</textarea>
+	<textarea id="detail-notes" rows="3" class="card-notes" readonly>${card.personal_notes}</textarea>
+	<textarea id="detail-warnings"  rows="2" class="card-warnings" readonly>${card.warnings}</textarea>
 	<input id="detail-time" type="time" value = "${card.reminder_times}" readonly></input>
 	
 	 
@@ -369,13 +369,15 @@ function editcard() {
 	
 		for (let i of inputlist ) {
 			document.getElementById("detail-"+i).readOnly=false;
+			document.getElementById("detail-"+i).classList.toggle("editing", true);
+			
 
 			//console.log(i);
 	
 	}
 	
-	document.getElementById("edit-submit").style.display = "";
-	document.getElementById("edit-cancel").style.display = "";
+	document.getElementById("edit-submit").style.display = "inline";
+	document.getElementById("edit-cancel").style.display = "inline";
 	document.getElementById("card-edit").style.display = "none";
 	document.getElementById("card-yeet").style.display = "none";
 	
@@ -386,6 +388,8 @@ function canceledit() {
 	
 		for (let i of inputlist ) {
 			document.getElementById("detail-"+i).readOnly=true;
+			document.getElementById("detail-"+i).classList.toggle("editing", false);
+			
 
 			//console.log(i);
 	
@@ -393,8 +397,8 @@ function canceledit() {
 	
 	document.getElementById("edit-submit").style.display = "none";
 	document.getElementById("edit-cancel").style.display = "none";
-	document.getElementById("card-edit").style.display = "block";
-	document.getElementById("card-yeet").style.display = "block";
+	document.getElementById("card-edit").style.display = "inline";
+	document.getElementById("card-yeet").style.display = "inline";
 	
 }
 
@@ -426,7 +430,6 @@ async function submitedit() {
               personal_notes: notes,
               reminder_times: time,
               ocr_text: document.getElementById("form-ocrtext").value,
-              image_path: document.getElementById("form-imagepath").value
           }
 		  
 		  console.log(send);

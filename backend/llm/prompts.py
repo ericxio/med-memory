@@ -20,7 +20,7 @@ Extract medicine label information from the following OCR text.
 
 Return a JSON object with exactly these fields:
 - product_name: the name of the medicine or supplement
-- strength: the dosage/strength (e.g., "500 mg", "2000 IU")
+- strength: the dosage/strength (e.g., "500 mg", "2000 IU"). include units when present
 - directions: how to take it
 - warnings: any warnings or cautions
 - simple_explanation: a short, plain-language sentence for a senior

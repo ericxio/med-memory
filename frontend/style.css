@@ -187,6 +187,7 @@ margin-top: 30px }
     top: 50%;
     transform: translate(-50%, -50%);
 	max-width:80vw;
+	box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 
 
 }
@@ -252,17 +253,59 @@ margin-top: 30px }
 	font-size: var(--font-size-xxl);
 	font-weight: 666;
     color: var(--color-text);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     letter-spacing: 0.1px;
 	border:none;
 	background:transparent;
 }
 
-.card-divider { ... }
+.card-volatile {
+	font-size: var(--font-size-large);
+    color: var(--color-text);
+    margin-bottom: 4px;
+	border:none;
+	background:transparent;
+}
+
+.card-instructions {
+	font-size: var(--font-size-medium);
+    color: var(--color-text);
+    margin-bottom: 4px;
+	border:none;
+	background:transparent;
+	width:60vw;
+	resize:none;
+}
+
+.card-notes {
+	font-size: var(--font-size-medium);
+    color: var(--color-text);
+    margin-bottom: 4px;
+	border:none;
+	background:transparent;
+		width:60vw;
+	resize:none;
+}
+
+.card-warnings {
+	font-size: var(--font-size-large);
+    color: var(--color-warning);
+	background-color: var(--color-warning-bg);
+    margin-bottom: 4px;
+	border:none;
+	background:transparent;
+		width:60vw;
+	resize:none;
+}
+
+
+
+.card-divider {
     
     border: none;
     border-top: 2px solid var(--color-border);
     margin: var(--spacing-section) 0;
+}
     
 
 
@@ -270,6 +313,16 @@ body  {
   background:#ffffee;
 
   
+}
+
+input, textarea {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input.editing, textarea.editing {
+    background-color: white;
+	border: 2px dotted rgba(0,0,255,0.5);
 }
 
 :root {
@@ -281,8 +334,9 @@ body  {
 
     --color-primary: #1d4ed8;
 
-    --color-warning: #b91c1c;
-    --color-warning-bg: #fef2f2;
+    --color-warning: #b60000;
+    --color-warning-bg: #ffe6cc;
+	
 
     --color-notes-bg: #eff6ff;
     --color-notes-border: #93c5fd;
