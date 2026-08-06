@@ -1,7 +1,8 @@
 from rapidfuzz import fuzz
 from backend.cards import service as cardservice
-
-
+from backend.ocr import service as ocrservice
+from backend.config import upload_dir
+from backend.config import ocrthreshold
 threshold = 60
 
 def similarity(a,b):
@@ -52,5 +53,16 @@ def findmatch(text):
 #
 # print(similarity(a,b))
 #
+
+def matchbyimage(image):
+    path = upload_dir / image
+    ocrtext = ocrservice.lowconfidencefilterer(ocrservice.textextracter(path), threshold=ocrthreshold)
+
+    return findmatch(ocrtext)
+
+
+
+
+
 
 

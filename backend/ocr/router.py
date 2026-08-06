@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from backend.config import ocrthreshold
 
 from pathlib import Path
 
@@ -14,14 +15,7 @@ uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 class Ocrrequest(BaseModel):
 
     filename: str
-    # def __init__(self, json):
-    #
-    #     super().__init__()
-    #
-    #     if 'filename' not in json:
-    #         raise HTTPException(422, "no filename")
-    #
-    #     self.filename = json['filename']
+
 
 
 
@@ -33,7 +27,7 @@ async def runocr(request: Ocrrequest):
     filepath = uploaddir / filename
 
     try:
-        data = service.lowconfidencefilterer(service.textextracter(str(filepath)))
+        data = service.lowconfidencefilterer(service.textextracter(str(filepath)), threshold = ocrthreshold)
 
     except FileNotFoundError:
         raise HTTPException(404, "file " + str(filepath) + " not found")

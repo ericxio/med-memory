@@ -14,6 +14,7 @@ openaikey = os.getenv("OPENAI_API_KEY")
 
 openaimodel = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
+ocrthreshold = 0.25
 
 
 
