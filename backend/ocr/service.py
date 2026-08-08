@@ -7,6 +7,7 @@ reader = easyocr.Reader(['en'], model_storage_directory="./ocrmodels")
 print("loading ocr complete")
 
 def textextracter(imgpath: str):
+    imgpath = str(imgpath)
 
     if not os.path.isfile(imgpath):
         raise FileNotFoundError

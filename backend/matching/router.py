@@ -31,8 +31,10 @@ async def matchbottle(matchrequest: Matchrequest):
         raise HTTPException(status_code=404,
                             detail="image not found")
 
-    except:
-        raise HTTPException(status_code=500, detail="server error")
+    # except Exception as e:
+    #     print(e)
+    #     raise HTTPException(status_code=500, detail="server error")
+
 
 
 

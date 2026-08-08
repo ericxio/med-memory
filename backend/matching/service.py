@@ -3,6 +3,9 @@ from backend.cards import service as cardservice
 from backend.ocr import service as ocrservice
 from backend.config import upload_dir
 from backend.config import ocrthreshold
+from pathlib import Path
+
+uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 threshold = 60
 
 def similarity(a,b):
@@ -20,6 +23,8 @@ def similarity(a,b):
 
 
 def findmatch(text):
+    realtext = ocrservice.textextracter(text)
+    print(realtext)
     cards = cardservice.getallcards(
     )
 
@@ -33,7 +38,7 @@ def findmatch(text):
     if len(cards) == 0: return message
 
     for i in cards:
-        score = similarity(text, i.ocr_text)
+        score = similarity(realtext, i["ocr_text"])
         if score > message["best_score"]:
             #message["matched"] = True
             message["best_score"] = score
@@ -55,7 +60,7 @@ def findmatch(text):
 #
 
 def matchbyimage(image):
-    path = upload_dir / image
+    path = uploaddir / image
     ocrtext = ocrservice.lowconfidencefilterer(ocrservice.textextracter(path), threshold=ocrthreshold)
 
     return findmatch(ocrtext)

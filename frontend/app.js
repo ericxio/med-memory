@@ -509,7 +509,93 @@ function closedetail() {
 	
 }
 
-tabswitcher("upload")
+async function handlematching(file) {
+	try{
+			document.getElementById("identify-photo-button").disabled=true;
+
+		
+	if (file == undefined) {
+			document.getElementById("identify-photo-button").disabled=false;
+
+		return;
+	}
+	
+	       const formdata = new FormData();
+         formdata.append("file", file);
+         const uploadresponce = await fetch("/api/upload", {
+             method: "POST",
+              body: formdata
+          });
+		  
+		          const uploaddata = await uploadresponce.json();
+				  console.log(uploaddata);
+          const filename = uploaddata.fileid;
+		  
+		  console.log(filename);
+		  
+		  const matchresponce = await fetch("/api/match", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ filename: filename })
+          });
+		  
+		  const data = await matchresponce.json()
+
+		  
+		            if (data.matched) {
+              showmatchresult(data);
+          } 
+		  else {
+              dontshowmatchresult(data);
+          }
+	}
+	catch {
+	}
+	
+	document.getElementById("identify-photo-button").disabled=false;
+		document.getElementById("identify-input").value="";
+		  
+
+}
+
+function showmatchresult(data) {
+	document.getElementById("identify-result").style.display="block";
+	
+	document.getElementById("identify-result").innerHTML = `
+	<h2>match found: ${data.product_name}</h2>
+	<h2>confidence: ${Math.round(data.score)}%</h2>
+	
+	<button id="showmatchresult-button">show card</button>
+	`
+document.getElementById("showmatchresult-button").addEventListener("click", () => {showcarddetail(data.card_id)});
+
+	
+	
+}
+
+function dontshowmatchresult(data) {
+	document.getElementById("identify-result").style.display="block";
+	
+	document.getElementById("identify-result").innerHTML = `
+	<h2>match not found :(</h2>
+
+	
+	<button id="tryagain-button">try again</button>
+	`
+	console.log(data);
+document.getElementById("tryagain-button").addEventListener("click", () => {
+	document.getElementById("identify-result").style.display="none";
+	document.getElementById("identify-input").value="";
+	
+});
+
+	
+	
+}
+
+
+
+tabswitcher("identify")
 
 
 document.getElementById("uploader-button").addEventListener("click", uploadhandler);
@@ -537,4 +623,23 @@ document.getElementById("edit-cancel").addEventListener("click", canceledit);
 
 	document.getElementById("autocreatenewcard").addEventListener("click", handleautofill)
 
-console.log("event listeners have fired")
+document.getElementById("identify-photo-button").addEventListener("click", () => {
+     document.getElementById("identify-input").click() });
+
+ //	document.getElementById("identify-commence").addEventListener("click", ()=>{handlematching()})
+	
+document.getElementById("identify-input").addEventListener("change", function () {
+    const file = this.files[0];
+
+    if (file) {
+        handlematching(file);
+    }
+});
+
+document.getElementById("identify-input-alt").addEventListener("change", function () {
+    const file = this.files[0];
+
+    if (file) {
+        handlematching(file);
+    }
+});
