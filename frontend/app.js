@@ -593,7 +593,45 @@ document.getElementById("tryagain-button").addEventListener("click", () => {
 	
 }
 
+function buildtts(card) {
+	let parts = [];
+	
+	let intro = "";
+	
+	if (card.product_name) {
+		intro += 	`now reading instructions for ${card.product_name}`
+		
+		if (card.strength) intro +=` 	, ${card.strength}`;
+		
+		else intro += ".";
+		
+		
+	}
+	
+	parts.push(intro);
+	
+	if (card.directions) parts.push(card.directions);
+	
+	if (has(card.warnings)) {
+              parts.push(`warning: ${card.warnings}`);
+         }
+		 
+		 if (has(card.personal_notes)) {
+              parts.push(`note: ${card.personal_notes}`);
+         }
+		 
+		           if (has(card.reminder_times)) {
+              parts.push(`your reminder is set for ${card.reminder_times}.`);
+          }
+		  
+		  //if (has(card.last_taken_at)) {
+    //          parts.push(`you last took ts at ${formatTimeAgo(card.last_taken_at)}.`);
+    //      }
+		 
+		 return parts.join(" ");
 
+		 
+}
 
 tabswitcher("identify")
 
