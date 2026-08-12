@@ -633,6 +633,108 @@ function buildtts(card) {
 		 
 }
 
+let avaliblevoices = []
+function loadvoices() {
+	avaliblevoices = speechSynthesis.getVoices();
+	
+	if (avaliblevoices.length == 0) {
+		speechSynthesis.addEventListener("voiceschanged", () => {
+                 availablevoices = speechSynthesis.getVoices();
+              });
+          }
+		  
+		  
+
+	}
+	
+
+}
+
+function selectvoice() {
+	let englishvoices = availableVoices.filter(
+              v => v.lang.startsWith("en")
+          );
+		  
+		  const preferred = ["Google US English", "Samantha", 
+                             "Microsoft Zira"];
+							 
+							 for (let i of preferred) {
+								 let  found = englishvoices.find(v => v.name == name);
+              if (found) return found;
+
+							 }
+							 
+							 return englishVoices[0] || undefined;
+
+
+}
+
+let isreading = false;
+function handletts() {
+	if (isreading) {
+		stoptts();
+		return;
+	}
+	
+	const card = window.currentcarddata;
+	if (!card) return;
+	
+	const script = buildtts(card);
+	
+	speechSynthesis.cancel();
+	
+	const utterance = new SpeechSynthesisUtterance(script);
+
+const voice = selectvoice();
+          if (voice) utterance.voice = voice;
+		  
+		            utterance.onstart = () => {
+              isspeaking = true;
+              updatereadaloudbutton(true);
+          };
+          utterance.onend = () => {
+              isspeaking = false;
+              updatereadaloudbutton(false);
+          };
+          utterance.onerror = (event) => {
+              console.error("error:", event.error);
+              isspeaking = false;
+              updatereadaloudbutton(false);
+          };
+    
+          speechSynthesis.speak(utterance);
+		  
+		  
+
+
+	
+}
+
+function stopSpeaking(){
+     speechSynthesis.cancel();
+    isspeaking = false;
+    updatereadaloudbutton(false);
+}
+
+function updatereadaloudbutton(speaking)
+ const btn = document.getElementById("card-readaloud");
+       if (speaking) {
+           btn.textContent = "STOP";
+           btn.classList.add("stopreadaloud");
+           btn.classList.remove("readaloud");
+       } 
+		else {
+           btn.textContent = "READ ALOUD";
+           btn.classList.remove("stopreadaloud");
+           btn.classList.add("readaloud");
+       }
+
+
+
+	
+
+
+
 tabswitcher("identify")
 
 
@@ -681,3 +783,5 @@ document.getElementById("identify-input-alt").addEventListener("change", functio
         handlematching(file);
     }
 });
+
+loadvoices();
