@@ -503,6 +503,8 @@ async function handleautofill() {
 
 }
 	
+	const has = (val) => val !== null && val !== undefined && val !== "";
+
 function closedetail() {
 	document.getElementById("overlay").style.display="none";
 	document.getElementById("card-detail").style.display="none";
@@ -594,6 +596,7 @@ document.getElementById("tryagain-button").addEventListener("click", () => {
 }
 
 function buildtts(card) {
+	console.log(card);
 	let parts = [];
 	
 	let intro = "";
@@ -601,7 +604,7 @@ function buildtts(card) {
 	if (card.product_name) {
 		intro += 	`now reading instructions for ${card.product_name}`
 		
-		if (card.strength) intro +=` 	, ${card.strength}`;
+		if (card.strength) intro +=` 	, ${card.strength}.`;
 		
 		else intro += ".";
 		
@@ -621,7 +624,12 @@ function buildtts(card) {
          }
 		 
 		           if (has(card.reminder_times)) {
-              parts.push(`your reminder is set for ${card.reminder_times}.`);
+					   let realremindertimeformatted = new Date(`1970-01-01T${card.reminder_times}`).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit"
+})
+              parts.push(`your reminder is set for ${card.realremindertimeformatted}.`);
+			  console.log(card.realremindertimeformatted);
           }
 		  
 		  //if (has(card.last_taken_at)) {
@@ -648,10 +656,10 @@ function loadvoices() {
 	}
 	
 
-}
+
 
 function selectvoice() {
-	let englishvoices = availableVoices.filter(
+	let englishvoices = availablevoices.filter(
               v => v.lang.startsWith("en")
           );
 		  
@@ -664,19 +672,20 @@ function selectvoice() {
 
 							 }
 							 
-							 return englishVoices[0] || undefined;
+							 return englishvoices[0] || undefined;
 
 
 }
 
 let isreading = false;
 function handletts() {
+	console.log("reading...");
 	if (isreading) {
 		stoptts();
 		return;
 	}
 	
-	const card = window.currentcarddata;
+	const card = window.card;
 	if (!card) return;
 	
 	const script = buildtts(card);
@@ -684,6 +693,7 @@ function handletts() {
 	speechSynthesis.cancel();
 	
 	const utterance = new SpeechSynthesisUtterance(script);
+	utterance.rate = 0.9;
 
 const voice = selectvoice();
           if (voice) utterance.voice = voice;
@@ -700,8 +710,9 @@ const voice = selectvoice();
               console.error("error:", event.error);
               isspeaking = false;
               updatereadaloudbutton(false);
+			  stopspeaking();
           };
-    
+			console.log("speech has officially started")
           speechSynthesis.speak(utterance);
 		  
 		  
@@ -710,24 +721,30 @@ const voice = selectvoice();
 	
 }
 
-function stopSpeaking(){
+function stopspeaking(){
      speechSynthesis.cancel();
     isspeaking = false;
     updatereadaloudbutton(false);
+			   		   //document.getElementById("card-readaloud").addEventListener("click", handletts);
+
 }
 
-function updatereadaloudbutton(speaking)
- const btn = document.getElementById("card-readaloud");
+function updatereadaloudbutton(speaking){
+ let btn = document.getElementById("card-readaloud");
        if (speaking) {
            btn.textContent = "STOP";
            btn.classList.add("stopreadaloud");
            btn.classList.remove("readaloud");
+		   //document.getElementById("card-readaloud").addEventListener("click", stopspeaking);
+
        } 
 		else {
            btn.textContent = "READ ALOUD";
            btn.classList.remove("stopreadaloud");
            btn.classList.add("readaloud");
-       }
+		   		   //document.getElementById("card-readaloud").addEventListener("click", handletts);
+
+}}
 
 
 
@@ -785,3 +802,5 @@ document.getElementById("identify-input-alt").addEventListener("change", functio
 });
 
 loadvoices();
+
+document.getElementById("card-readaloud").addEventListener("click", handletts);
