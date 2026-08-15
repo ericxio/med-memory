@@ -37,6 +37,15 @@ def initdatabase():
         )
         """)
 
+        cur.execute("""
+                CREATE TABLE IF NOT EXISTS usage_log (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    card_id INTEGER NOT NULL,
+                    event_type TEXT NOT NULL,
+                    timestamp TEXT NOT NULL,
+                    notes TEXT
+                )
+            """)
 
         cur.execute("SELECT * FROM cards")
 
