@@ -38,3 +38,35 @@ def gethistory(cardid: int, limit:int=20) -> list:
 
     return list(rows)
 
+def usagesummary(cardid: int) -> dict:
+    con = getconnection()
+    cursor = con.cursor()
+    cursor.execute(
+        "SELECT timestamp FROM usage_log "
+        "WHERE card_id = ? AND event_type = 'taken' "
+        "ORDER BY timestamp DESC LIMIT 1",
+        (cardid,)
+    )
+    row = cursor.fetchone()
+    lasttaken = row["timestamp"] if row else None
+
+    con.close(
+    )
+
+    return dict(row)
+
+
+def deletehistory(cardid:int):
+    con= getconnection()
+    cursor = con.cursor()
+    cursor.execute(
+        "DELETE FROM usage_log WHERE card_id = ?",
+        (cardid,)
+    )
+    count = cursor.rowcount
+
+    con.commit()
+    con.close();
+    return count
+
+
