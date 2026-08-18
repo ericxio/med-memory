@@ -23,6 +23,7 @@ from upload.service import uploaddirchecker
 
 from backend.llm.router import router as llmrouter
 from backend.matching.router import router as matchingrouter
+from backend.usage.router import router as usage_router
 
 
 
@@ -34,6 +35,7 @@ app.include_router(ocrrouter)
 app.include_router(cardrouter)
 app.include_router(llmrouter)
 app.include_router(matchingrouter)
+app.include_router(usage_router)
 
 
 

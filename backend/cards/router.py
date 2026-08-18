@@ -40,6 +40,10 @@ async def updatecard(cardid: int, updates: Updatecard):
 async def deletecard(cardid: int):
     result = service.deletecard(cardid)
 
+    from backend.usage.service import deletehistory
+    deletehistory(cardid)
+
+
     if result is False:
         raise HTTPException(status_code=404, detail="card not found")
 

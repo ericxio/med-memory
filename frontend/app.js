@@ -749,8 +749,66 @@ function updatereadaloudbutton(speaking){
 
 
 	
+function handletaken() {
+	const cardid = currentcardid;
+	if (!cardid)return;
+	
+	let responce = await fetch(`/api/cards/${cardId}/log`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ event_type: "taken" })
+          });
+		  
+		            const data = await response.json();
+          const time = formatTime(data.timestamp);
+			loadusagesummary(cardid);
 
 
+	 
+}
+
+function loadusagesummary(cardid) {
+	          const response = await fetch(`/api/cards/${cardId}/usage-summary`);
+         const data = await response.json();
+		 
+		 let summarydiv = document.getElementById("usage-summary");
+		 
+		 
+
+          let html = "";
+    
+          if (data.last_taken_at) {
+              html += `<p>last taken ${formattime(data.last_taken_at)}</p>`;
+          }
+          if (data.last_scanned_at) {
+              html += `<p>last scanned ${formattime(data.last_scanned_at)}</p>`;
+          }
+          if (!data.last_taken_at && !data.last_scanned_at) {
+              html = `<p>no usage recorded</p>`;
+          }
+
+
+summarydiv.innerHTML = html;
+
+
+}
+
+
+function formattime(ts) {
+	let date = new Date(ts);
+	let now = Date.now();
+	
+	let diffms = now - date;
+	let diffmins = Math.floor(diffms / 60000); //difference in mins
+	
+	
+	if (diffmins < 1) return "just now"
+	if (diffmins < 60) return `${diffmins} minute${diffMins !== 1 ? 's' : ''} ago`
+	if (diffmins < 1440) return `${Math.floor(diffmins/60)} hour${diffMins !== 1 ? 's' : ''} ago`
+
+	
+	
+}
 
 tabswitcher("identify")
 
