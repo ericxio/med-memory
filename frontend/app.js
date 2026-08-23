@@ -542,7 +542,7 @@ async function handlematching(file) {
           });
 		  
 		  const data = await matchresponce.json()
-
+			console.log(data);
 		  
 		            if (data.matched) {
               showmatchresult(data);
@@ -749,7 +749,7 @@ function updatereadaloudbutton(speaking){
 
 
 	
-function handletaken() {
+async  function handletaken() {
 	const cardid = currentcardid;
 	if (!cardid)return;
 	
@@ -767,7 +767,7 @@ function handletaken() {
 	 
 }
 
-function loadusagesummary(cardid) {
+async function loadusagesummary(cardid) {
 	          const response = await fetch(`/api/cards/${cardId}/usage-summary`);
          const data = await response.json();
 		 

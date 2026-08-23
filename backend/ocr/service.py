@@ -1,6 +1,8 @@
 import easyocr
 from pathlib import Path
 import os
+import cv2
+
 
 print("loading ocr...")
 reader = easyocr.Reader(['en'], model_storage_directory="./ocrmodels")
@@ -8,6 +10,11 @@ print("loading ocr complete")
 
 def textextracter(imgpath: str):
     imgpath = str(imgpath)
+
+    img = cv2.imread(str(imgpath))
+
+    print(img.shape)
+
 
     if not os.path.isfile(imgpath):
         raise FileNotFoundError

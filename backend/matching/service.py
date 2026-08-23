@@ -5,6 +5,8 @@ from backend.config import upload_dir
 from backend.config import ocrthreshold
 from pathlib import Path
 
+from backend.ocr.service import textextracter
+
 uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 threshold = 60
 
@@ -13,6 +15,10 @@ def similarity(a,b):
 
     a = a.lower().rstrip().lstrip()
     b = b.lower().rstrip().lstrip()
+
+    if len(a) < 5 or len(b) < 5:
+        return 100.0 if a == b else 0.0
+
 
     basicscore = fuzz.ratio(a, b)
     partialscore = fuzz.partial_ratio(a, b)
@@ -23,7 +29,9 @@ def similarity(a,b):
 
 
 def findmatch(text):
-    realtext = ocrservice.textextracter(text)
+    processedtext = ocrservice.lowconfidencefilterer(text)
+    realtext = " ".join(i["text"] for i in processedtext)
+
     print(realtext)
     cards = cardservice.getallcards(
     )
@@ -38,11 +46,18 @@ def findmatch(text):
     if len(cards) == 0: return message
 
     for i in cards:
+        print("ocr_text")
+        print(i);
         score = similarity(realtext, i["ocr_text"])
+        print(score);
         if score > message["best_score"]:
             #message["matched"] = True
             message["best_score"] = score
-            message["best_product"] = i.product_name
+            message["best_product"] = i["product_name"]
+            message["new_ocr_text"] = i["ocr_text"]
+            message["card_id"] = i["id"]
+            message["card"] = cardservice.getcardbyid(i["id"])
+            message["product_name"] = i["product_name"]
             #message["message"] = "card found"
 
     if message["best_score"] > threshold:
