@@ -53,6 +53,8 @@ def findmatch(text):
         if score > message["best_score"]:
             #message["matched"] = True
             message["best_score"] = score
+            message["score"] = score
+
             message["best_product"] = i["product_name"]
             message["new_ocr_text"] = i["ocr_text"]
             message["card_id"] = i["id"]

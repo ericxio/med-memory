@@ -678,6 +678,7 @@ function selectvoice() {
 }
 
 let isreading = false;
+let currentmode = 1;
 function handletts() {
 	console.log("reading...");
 	if (isreading) {
@@ -810,6 +811,37 @@ function formattime(ts) {
 	
 }
 
+function initmode() {
+const savedmode = localStorage.getItem("appmode");
+if (savedmode == "senior" || savedmode == "unsenior") {
+	currentmode = savedmode;
+}
+
+applymode(currentmode);
+
+}
+
+function applymode(mode) {
+	          const senior = document.getElementById("senior-nav");
+          const unsenior = document.getElementById("unsenior-nav");
+
+	if (mode == "senior") {
+		senior.display.style = "flex";
+		unsenior.display.style = "none";
+		
+	}
+	else {
+		senior.display.style = "none";
+		unsenior.display.style = "flex";
+		
+	}
+	
+	document.querySelectorAll(".unsenior-only").forEach(el => {el.style.display = mode == "unsenior" ? "" : "none";});
+		document.querySelectorAll(".senior-only").forEach(el => {el.style.display = mode == "senior" ? "" : "none";});
+
+
+}
+
 tabswitcher("identify")
 
 
@@ -862,3 +894,8 @@ document.getElementById("identify-input-alt").addEventListener("change", functio
 loadvoices();
 
 document.getElementById("card-readaloud").addEventListener("click", handletts);
+
+
+
+
+initmode(); //init mode
