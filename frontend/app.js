@@ -131,13 +131,14 @@ async function ocrhandler() {
 
 
 function tabswitcher(tab) {
+	stopspeaking();
 	const sections = document.querySelectorAll(".myClass");
 	
 	document.querySelectorAll(".section").forEach(element => {
     element.hidden = false;
 	});
 
-	document.querySelectorAll(".section:not(#"+tab+"-section)").forEach(element => {
+	document.querySelectorAll(".section:not(#"+tab+")").forEach(element => {
     element.hidden = true;
 	});
 }
@@ -157,7 +158,7 @@ function tabswitcher2(tab) {
 
 
 function showcardform() {
-	tabswitcher("cardform")
+	tabswitcher("cardform-section")
 	
 	console.log("showing card form");
 	
@@ -222,12 +223,12 @@ async function savecard() {
 }
 
 function cancelform() {
-	tabswitcher("cards");
+	tabswitcher("cards-section");
 	
 }
 
 async function showcardlist() {
-	tabswitcher("cards");
+	tabswitcher("cards-section");
 	let container = document.getElementById("card-list-container");
 	
 	container.innerHTML = "";
@@ -347,7 +348,7 @@ function rendercarddetail(card) {
 }
 
 function editcard2() { //unused
-	tabswitcher("cardform")
+	tabswitcher("cardform-section")
 	
 	//document.getElementById("form-ocrtext").value = document.getElementById("ocr-result").value;
 	
@@ -842,14 +843,22 @@ function applymode(mode) {
 
 }
 
-tabswitcher("identify")
+function back() {
+	if (currentmode == "senior") tabswitcher("senior-home-section");
+	
+	else tabswitcher("card-list-section");
+	
+	return  "success";
+}
+
+tabswitcher("identify-section")
 
 
 document.getElementById("uploader-button").addEventListener("click", uploadhandler);
 document.getElementById("ocr-button").addEventListener("click", ocrhandler)
 
-document.getElementById("topbar-scan").addEventListener("click", () => {tabswitcher("upload")})
-document.getElementById("topbar-cards").addEventListener("click", () => {tabswitcher("cards");
+document.getElementById("topbar-scan").addEventListener("click", () => {tabswitcher("upload-section")})
+document.getElementById("topbar-cards").addEventListener("click", () => {tabswitcher("cards-section");
 showcardlist()})
 
 
@@ -899,3 +908,4 @@ document.getElementById("card-readaloud").addEventListener("click", handletts);
 
 
 initmode(); //init mode
+

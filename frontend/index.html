@@ -64,7 +64,7 @@
   <p id="card-list-empty">
   </p>
 </div>
-<div class="section" id="cardform-section" >
+<div class="section" id="cardform-section" class="unsenior-only">
   <h2>
     create card
   </h2>
@@ -136,15 +136,15 @@
 <div class="last-taken"></div>
 <button id="card-taken">
 i took ts</button>
-<button id="card-edit">
+<button id="card-edit" class="unsenior-only">
   EDIT
 </button>
-<button id="card-yeet">
+<button id="card-yeet" class="unsenior-only">
   RECYCLE
 </button>
 
-<button id="edit-submit" style="display:none;">SUBMIT</button>
-<button id="edit-cancel" style="display:none;">CANCEL</button>
+<button id="edit-submit" style="display:none;" class="unsenior-only">SUBMIT</button>
+<button id="edit-cancel" style="display:none;" class="unsenior-only">CANCEL</button>
 
 <button id="card-readaloud">
   READ ALOUD
@@ -171,11 +171,30 @@ i took ts</button>
 <div id="overlay" style="display:none;"></div>
 
 <div class="section" id="senior-home-section">
-<button id="gear-btn" class="gear-btn"></button>
+<button id="toggle-orb" class="toggle-orb"></button>
 <p id="senior-profile-name"> </p>
 <button id="senior-photo-btn" class="btn btn-senior-photo"></button>
 <input type="file" id="senior-file-input" accept="image/*" capture="environment" style="display:none"></input>
 <p>tap to take picture</p>
 <div	id="senior-reminders-list"></div>
 
+</div>
+
+<nav id="senior-nav" class="nav-bar senior-nav">
+    <span class="nav-title">title</span>
+</nav>
+
+<nav id="unsenior-nav">
+  <button id="topbar-scan-2"  onclick="tabswitcher('scan-section')">
+    SCAN
+  </button>
+  <button id="topbar-cards-2" onclick="tabswitcher('cards-section')">
+    CARDS
+  </button>
+  
+  <button id="topbar-match-2"  onclick="tabswitcher('match-section')">
+    MATCH
+  </button>
+  
+  
 </div>
