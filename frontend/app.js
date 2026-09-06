@@ -132,7 +132,7 @@ async function ocrhandler() {
 
 function tabswitcher(tab) {
 	stopspeaking();
-	const sections = document.querySelectorAll(".myClass");
+	const sections = document.querySelectorAll(".myfClass");
 	
 	document.querySelectorAll(".section").forEach(element => {
     element.hidden = false;
@@ -290,6 +290,36 @@ function rendercard(card) {
 	
 	return html;
 }
+
+function loadreminders() {
+	          const response = await fetch("/api/cards");
+        const cards = await response.json();
+		
+		const cardswithusage = await Promise.all(
+              cards.map(async (card) => {
+                  const responce2 = await fetch(`/api/cards/${card.id}/usage-summary`);
+                  const usage = await responce2.json();
+                  return { ...card, ...usage };
+              })
+          );
+		  
+		  let listDIV = document.getElementById("senior-reminders-list");
+	if (!cardswithusage.length) {
+	listDIV.innerHTML = "no medicines set up"
+	return;
+}
+
+	
+		  listDIV.innerHTML = cardswithusage.map(card => reminderitem(card)).join("");
+		  
+
+
+}
+
+function reminderitem(card) {
+	return "<p>work in progress</p>"
+}
+
 
 
 	
@@ -827,13 +857,13 @@ function applymode(mode) {
           const unsenior = document.getElementById("unsenior-nav");
 
 	if (mode == "senior") {
-		senior.display.style = "flex";
-		unsenior.display.style = "none";
+		senior.style.display = "flex";
+		unsenior.style.display = "none";
 		
 	}
 	else {
-		senior.display.style = "none";
-		unsenior.display.style = "flex";
+		senior.style.display = "none";
+		unsenior.style.display = "flex";
 		
 	}
 	
