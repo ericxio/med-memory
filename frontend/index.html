@@ -1,203 +1,161 @@
+<!doctype html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedMemory</title>
   <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer>
-  </script>
+  <script src="app.js" defer></script>
 </head>
-<div id="topbar">
-  <button id="topbar-scan">
-    SCAN
-  </button>
-  <button id="topbar-cards">
-    CARDS
-  </button>
-</div>
-<div id="upload-section" class="section">
-  <h1>
-    upload image
-  </h1>
-  <input type="file" id="photo" accept="image/*" capture="enviornment">
-  <p>
-  </p>
-  <button id="uploader-button">
-    UPLOAD
-  </button>
-  <img id="preview" style="display:none">
-  <p id="uploadstatus">
-    ...
-  </p>
-  <h1>
-    text extraction
-  </h1>
-  <button id="ocr-button">
-    GET TEXT
-  </button>
-  <div id="ocr" style="display:none">
-    <br>
-    <br>
-    <textarea id="ocr-result" rows="10" placeholder="...">
-    </textarea>
-    <p id="ocr-confidence">
-      confidence: 67%
-    </p>
-    <button id="createnewcard">
-      CREATE CARD
-    </button>
-    <p>
-    </p>
-    <button id="autocreatenewcard">
-      AUTOFILL CARD
-    </button>
+<body>
+
+<header id="topbar" class="unsenior-only">
+  <span class="brand">MedMemory</span>
+  <div class="topbar-actions">
+    <button id="mode-toggle" class="btn btn-nav">Senior view</button>
   </div>
-  <p id="ocr-status">
-    waiting...
-  </p>
-</div>
-<div id="cards-section" class="section">
-  <h1>
-    cards
-  </h1>
-  <button id="createnewcard2">
-    CREATE
-  </button>
-  <div id="card-list-container">
-  </div>
-  <p id="card-list-empty">
-  </p>
-</div>
-<div class="section" id="cardform-section" class="unsenior-only">
-  <h2>
-    create card
-  </h2>
-  <p id="form-label">
-    profile
-  </p>
-  <input type="text" id="form-profile" required>
-</input>
-<p id="form-label">
-  product name
-</p>
-<input type="text" id="form-productname" required>
-</input>
-<p id="form-label">
-  strength
-</p>
-<input type="text" id="form-strength">
-</input>
-<p id="form-label">
-  instructions
-</p>
-<textarea type="text" id="form-instructions" rows="3" resize:vertical>
-</textarea>
-<p id="form-label">
-  notes
-</p>
-<textarea type="text" id="form-notes" rows="3" resize:vertical>
-</textarea>
-<p id="form-label">
-  warnings
-</p>
-<textarea type="text" id="form-warnings" rows="2" resize:vertical>
-</textarea>
-<p id="form-label">
-  ocr text
-</p>
-<textarea type="text" id="form-ocrtext" rows="3" readonly resize:vertical>
-  ...
-</textarea>
-<p id="form-label">
-  time
-</p>
-<input type="time" id="form-time">
-</input>
-<input type="text" id="form-imagepath" hidden>
-</input>
-<p id="form-status">
-  ...
-</p>
-<button id="form-submit">
-  SUBMIT
-</button>
-<button id="form-cancel">
-  CANCEL
-</button>
-</div>
+</header>
 
-<div id="card-detail" class="section">
-  <button id="close-detail">
-    <b>╳</b>
-  </button>
-<div id="card-detail-2">
+<main class="app-main">
 
-  <br>
-  <img id="detail-image" style="max-width:300px; max-height:200px;" class="card-image">
-</img>
-<div id="card-detail-content" class="card">
-</div>
-<div class="last-taken"></div>
-<button id="card-taken">
-i took ts</button>
-<button id="card-edit" class="unsenior-only">
-  EDIT
-</button>
-<button id="card-yeet" class="unsenior-only">
-  RECYCLE
-</button>
+  <!-- ===== Upload + OCR ===== -->
+  <section id="upload-section" class="section panel">
+    <h1>Upload image</h1>
+    <input type="file" id="photo" accept="image/*" capture="environment" class="file-input">
+    <button id="uploader-button" class="btn btn-danger btn-block">UPLOAD</button>
+    <img id="preview" alt="preview" style="display:none">
+    <p id="uploadstatus" class="status">...</p>
 
-<button id="edit-submit" style="display:none;" class="unsenior-only">SUBMIT</button>
-<button id="edit-cancel" style="display:none;" class="unsenior-only">CANCEL</button>
+    <h1>Text extraction</h1>
+    <button id="ocr-button" class="btn btn-warning">GET TEXT</button>
+    <div id="ocr" style="display:none">
+      <textarea id="ocr-result" class="text-input" rows="10" placeholder="extracted text..."></textarea>
+      <p id="ocr-confidence" class="status">confidence: 67%</p>
+      <div class="btn-row">
+        <button id="createnewcard" class="btn btn-success">CREATE CARD</button>
+        <button id="autocreatenewcard" class="btn btn-info">AUTOFILL CARD</button>
+      </div>
+    </div>
+    <p id="ocr-status" class="status">waiting...</p>
+  </section>
 
-<button id="card-readaloud">
-  READ ALOUD
-</button>
-</div>
-</div>
+  <!-- ===== Cards list ===== -->
+  <section id="cards-section" class="section panel">
+    <h1>Cards</h1>
+    <p class="status">Tap a card to view or edit it. To add a new one, use <strong>SCAN</strong>.</p>
+    <div id="card-list-container"></div>
+    <p id="card-list-empty" class="status"></p>
+  </section>
 
-<div id="identify-section" class="section" hidden>
-<h1 class="identify-title">bottle matcher</h1>
-<button id="identify-photo-button" class="identify-photo" style="display:block">take picture</button>
-  <input type="file" id="identify-input" accept="image/*" capture="environment" hidden style="display:none"></input>
-  <label for="identify-input-alt" class="identify-alt-label">or upload a photo</label>
-    <input type="file" id="identify-input-alt" accept="image/*"></input>
-	
-	
-	<div id="identify-result" style="display:none"></div>
-	
+  <!-- ===== Medication history (placeholder — feature planned) ===== -->
+  <section id="history-section" class="section panel">
+    <h1>Medication history</h1>
+    <p class="status">Coming soon.</p>
+    <p class="status">This page will show when each medicine was taken and scanned.</p>
+  </section>
 
+  <!-- ===== Card create / edit form ===== -->
+  <section id="cardform-section" class="section unsenior-only panel">
+    <h2>Create card</h2>
 
+    <img id="form-preview" class="card-image" alt="bottle photo" style="display:none">
 
+    <input type="text" id="form-profile" value="default" hidden>
 
-</div>
+    <label class="form-label" for="form-productname">product name</label>
+    <input type="text" id="form-productname" class="text-input" required>
 
+    <label class="form-label" for="form-strength">strength</label>
+    <input type="text" id="form-strength" class="text-input">
+
+    <label class="form-label" for="form-instructions">instructions</label>
+    <textarea id="form-instructions" class="text-input" rows="3"></textarea>
+
+    <label class="form-label" for="form-notes">notes</label>
+    <textarea id="form-notes" class="text-input" rows="3"></textarea>
+
+    <label class="form-label" for="form-warnings">warnings</label>
+    <textarea id="form-warnings" class="text-input" rows="2"></textarea>
+
+    <label class="form-label" for="form-ocrtext">ocr text</label>
+    <textarea id="form-ocrtext" class="text-input" rows="3" readonly></textarea>
+
+    <label class="form-label" for="form-time">time</label>
+    <input type="time" id="form-time" class="text-input">
+
+    <input type="text" id="form-imagepath" hidden>
+
+    <p id="form-status" class="status">...</p>
+
+    <div class="btn-row">
+      <button id="form-submit" class="btn btn-success">SUBMIT</button>
+      <button id="form-cancel" class="btn btn-danger">CANCEL</button>
+    </div>
+  </section>
+
+  <!-- ===== Card detail (modal) ===== -->
+  <section id="card-detail" class="section">
+    <button id="close-detail" class="btn btn-close" aria-label="close">&#10005;</button>
+    <div id="card-detail-2">
+      <img id="detail-image" class="card-image" alt="bottle photo">
+      <div id="card-detail-content" class="card"></div>
+      <div id="usage-summary" class="last-taken"></div>
+      <div class="btn-row">
+        <button id="card-taken" class="btn btn-primary senior-only">I took this</button>
+        <button id="card-edit" class="btn btn-secondary unsenior-only">EDIT</button>
+        <button id="card-yeet" class="btn btn-danger unsenior-only">RECYCLE</button>
+        <button id="edit-submit" class="btn btn-success unsenior-only" style="display:none;">SUBMIT</button>
+        <button id="edit-cancel" class="btn btn-secondary unsenior-only" style="display:none;">CANCEL</button>
+        <button id="card-readaloud" class="btn btn-info senior-only">READ ALOUD</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Identify / match (result page; entered from the senior photo button) ===== -->
+  <section id="identify-section" class="section panel">
+    <h1 class="identify-title">Result</h1>
+    <div id="identify-spinner" class="spinner" style="display:none"></div>
+    <p id="identify-status" class="status"></p>
+    <div id="identify-result" class="match-result" style="display:none"></div>
+
+    <!-- kept in the DOM for the matching logic, but hidden: the photo comes from the senior "Tap to take a picture" button -->
+    <div id="identify-inputs" style="display:none">
+      <button id="identify-photo-button" class="btn btn-primary btn-big">Take picture</button>
+      <input type="file" id="identify-input" accept="image/*" capture="environment" style="display:none">
+      <label for="identify-input-alt" class="identify-alt-label">or upload a photo</label>
+      <input type="file" id="identify-input-alt" accept="image/*" class="file-input">
+    </div>
+
+    <button id="identify-back" class="btn btn-secondary">Back</button>
+  </section>
+
+  <!-- ===== Senior home ===== -->
+  <section id="senior-home-section" class="section senior-home">
+    <button id="toggle-orb" class="toggle-orb" title="Back to setup">&#9881; Setup</button>
+    <p id="senior-profile-name" class="senior-title">My Medicines</p>
+    <button id="senior-photo-btn" class="btn btn-senior-photo">
+      <span class="senior-photo-icon">&#128247;</span>
+      <span>Tap to take a picture</span>
+    </button>
+    <input type="file" id="senior-file-input" accept="image/*" capture="environment" style="display:none">
+    <div id="senior-reminders-list" class="reminders"></div>
+  </section>
+
+</main>
+
+<!-- ===== Overlay behind the modal ===== -->
 <div id="overlay" style="display:none;"></div>
 
-<div class="section" id="senior-home-section">
-<button id="toggle-orb" class="toggle-orb"></button>
-<p id="senior-profile-name"> </p>
-<button id="senior-photo-btn" class="btn btn-senior-photo"></button>
-<input type="file" id="senior-file-input" accept="image/*" capture="environment" style="display:none"></input>
-<p>tap to take picture</p>
-<div	id="senior-reminders-list"></div>
-
-</div>
-
+<!-- ===== Bottom navs (mode-dependent) ===== -->
 <nav id="senior-nav" class="nav-bar senior-nav">
-    <span class="nav-title">title</span>
+  <span class="nav-title">MedMemory</span>
 </nav>
 
-<nav id="unsenior-nav">
-  <button id="topbar-scan-2"  onclick="tabswitcher('scan-section')">
-    SCAN
-  </button>
-  <button id="topbar-cards-2" onclick="tabswitcher('cards-section')">
-    CARDS
-  </button>
-  
-  <button id="topbar-match-2"  onclick="tabswitcher('match-section')">
-    MATCH
-  </button>
-  
-  </nav>
-  <div id="senior-reminders-list">reminders</div>
-  
-  
-</div>
+<nav id="unsenior-nav" class="nav-bar">
+  <button id="topbar-scan-2"  class="btn btn-nav" onclick="tabswitcher('upload-section')">SCAN</button>
+  <button id="topbar-cards-2" class="btn btn-nav" onclick="tabswitcher('cards-section'); showcardlist();">CARDS</button>
+  <button id="topbar-history-2" class="btn btn-nav" onclick="tabswitcher('history-section')">HISTORY</button>
+</nav>
+
+</body>
+</html>
