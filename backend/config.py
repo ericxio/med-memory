@@ -16,6 +16,11 @@ openaimodel = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 ocrthreshold = 0.25
 
+jwt_secret = os.getenv("JWT_SECRET", "dev-only-insecure-change-me")
+jwt_algorithm = "HS256"
+jwt_expire_minutes = int(os.getenv("JWT_EXPIRE_MINUTES", "10080"))  # 7 days 0 hours
+
+
 
 
 

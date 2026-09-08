@@ -25,6 +25,7 @@ from backend.llm.router import router as llmrouter
 from backend.matching.router import router as matchingrouter
 from backend.usage.router import router as usage_router
 
+from backend.auth.router import router as authrouter
 
 
 
@@ -39,6 +40,7 @@ app.include_router(usage_router)
 
 
 
+app.include_router(authrouter)
 
 
 

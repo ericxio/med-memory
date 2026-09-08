@@ -39,7 +39,6 @@ async function uploadhandler() {
 
        currentfileid = data.fileid;
 
-       // attach the photo to the card immediately, so it is saved even if OCR is skipped
        document.getElementById("form-imagepath").value = data.fileid;
 
     }

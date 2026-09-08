@@ -13,48 +13,50 @@ def getconnection():
 
 def initdatabase():
     data_dir.mkdir(parents=True, exist_ok=True)
-
+    con = getconnection()
+    cur = con.cursor()
     try:
-
-        table = getconnection()
-
-        cur = table.cursor()
-
         cur.execute("""
-        CREATE TABLE IF NOT EXISTS cards (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        profile_name TEXT,
-        product_name TEXT,
-        strength TEXT,
-        directions TEXT,
-        warnings TEXT,
-        personal_notes TEXT,
-        reminder_times TEXT,
-        ocr_text TEXT,
-        image_path TEXT,
-        created_at TEXT,
-        updated_at TEXT
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            created_at TEXT NOT NULL
         )
         """)
 
         cur.execute("""
-                CREATE TABLE IF NOT EXISTS usage_log (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    card_id INTEGER NOT NULL,
-                    event_type TEXT NOT NULL,
-                    timestamp TEXT NOT NULL,
-                    notes TEXT
-                )
-            """)
+        CREATE TABLE IF NOT EXISTS cards (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            product_name TEXT,
+            strength TEXT,
+            directions TEXT,
+            warnings TEXT,
+            personal_notes TEXT,
+            reminder_times TEXT,
+            ocr_text TEXT,
+            image_path TEXT,
+            created_at TEXT,
+            updated_at TEXT
+        )
+        """)
 
-        cur.execute("SELECT * FROM cards")
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS usage_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            card_id INTEGER NOT NULL,
+            event_type TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            notes TEXT
+        )
+        """)
 
-        table.commit()
-
-
-
+        con.commit()
     finally:
-                table.close()
+        con.close()
+
+
 
 
 
