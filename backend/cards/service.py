@@ -5,117 +5,35 @@ from .models import Createcard, Updatecard
 
 
 
-def createcard(card):
+def createcard(user_id, card):
     time = datetime.now().isoformat()
-
-
-    table = getconnection()
-    cur = table.cursor()
+    con = getconnection(); cur = con.cursor()
     cur.execute(
-        "INSERT INTO cards (profile_name, product_name, strength, directions, warnings, personal_notes, reminder_times, ocr_text, image_path, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (card.profile_name, card.product_name, card.strength, card.directions, card.warnings, card.personal_notes, card.reminder_times, card.ocr_text, card.image_path, time, time)
+        "INSERT INTO cards (user_id, product_name, strength, directions, warnings, "
+        "personal_notes, reminder_times, ocr_text, image_path, created_at, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (user_id, card.product_name, card.strength, card.directions, card.warnings,
+         card.personal_notes, card.reminder_times, card.ocr_text, card.image_path, time, time),
     )
+    con.commit(); newid = cur.lastrowid; con.close()
+    return getcardbyid(newid, user_id)
 
+def getallcards(user_id):
+    con = getconnection(); cur = con.cursor()
+    cur.execute("SELECT * FROM cards WHERE user_id = ? ORDER BY created_at DESC", (user_id,))
+    rows = cur.fetchall(); con.close()
+    return [dict(r) for r in rows]
 
+def getcardbyid(cardid, user_id):
+    con = getconnection(); cur = con.cursor()
+    cur.execute("SELECT * FROM cards WHERE id = ? AND user_id = ?", (cardid, user_id))
+    row = cur.fetchone(); con.close()
+    return dict(row) if row else None      # not owned -> None -> 404
 
-
-    table.commit()
-    id2  = cur.lastrowid
-
-    cur.execute("SELECT * FROM cards")
-    allresuots = cur.fetchone()
-
-
-
-    d = dict(allresuots)
-
-    cur.close()
-
-    d["id"] = id2
-
-    return d
-
-    # return {
-    #     "id": id2,
-    #     "profile_name": card.profile_name,
-    #     "product_name": card.product_name,
-    #     "strength": card.strength,
-    #     "directions": card.directions,
-    #     "warnings": card.warnings,
-    #     "personal_notes": card.personal_notes,
-    #     "reminder_times": card.reminder_times,
-    #     "ocr_text": card.ocr_text,
-    #     "image_path": card.image_path,
-    #     "created_at": time,
-    #
-    # }
-
-def getallcards(profile: Optional[str] = None):
-    table = getconnection()
-    cur = table.cursor()
-
-
-    if profile is None:
-        cur.execute("SELECT * FROM cards ORDER BY created_at DESC")
-
-    else:
-        cur.execute("SELECT * FROM cards WHERE profile_name = ? ORDER BY created_at DESC", (profile,))
-
-    results = cur.fetchall()
-
-    d = [dict(row) for row in results]
-
-    table.close()
-
-    return d
-
-
-def getcardbyid(cardid):
-    table = getconnection()
-    cur = table.cursor()
-
-    cur.execute("SELECT * FROM cards WHERE id = ?", (cardid,))
-
-    result = cur.fetchone()
-
-    table.close()
-
-    if result is None: return None
-
-    else:
-        return dict(result)
-
-
-def updatecard(cardid, update):
-    card = getcardbyid(cardid)
+def updatecard(cardid, user_id, update):
+    card = getcardbyid(cardid, user_id)
     if card is None:
         return None
-
-    fields = update.model_dump(exclude_none=True)
-
-    if len(fields) == 0:
-        return card
-
-    fields["updated_at"] = datetime.now().isoformat()
-
-    table = getconnection()
-    cur = table.cursor()
-
-
-    for i in fields.keys():
-
-        cur.execute("UPDATE cards SET " + i + " = ? WHERE id = ?", (fields[i], cardid))
-
-
-    table.commit()
-
-    cur.execute("SELECT * FROM cards WHERE id = ?", (cardid,))
-
-    d = dict(cur.fetchone())
-    print(d)
-    table.close()
-
-    return d
 
 def deletecard(cardid):
     table = getconnection()

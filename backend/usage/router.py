@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import List
 from backend.usage.models import (
     Logeventrequest, Logeventresponce,
@@ -49,3 +49,9 @@ async def getcardusagesummary(cardid: int):
     }
 
 
+
+@router.post("/api/cards/{cardid}/log")
+async def logusage(cardid: int, body: ..., current_user: dict = Depends(get_current_user)):
+    if cardservice.getcardbyid(cardid, current_user["id"]) is None:
+        raise HTTPException(status_code=404, detail="card not found")
+    return usageservice.logevent(cardid, body.event_type, body.notes)
