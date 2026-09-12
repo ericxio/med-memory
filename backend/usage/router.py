@@ -7,6 +7,8 @@ from backend.usage.models import (
 from backend.usage import service as usageservice
 from backend.cards import service as cardsservice
 
+from backend.auth.deps import *;
+
 router = APIRouter()
 
 
@@ -51,7 +53,7 @@ async def getcardusagesummary(cardid: int):
 
 
 @router.post("/api/cards/{cardid}/log")
-async def logusage(cardid: int, body: ..., current_user: dict = Depends(get_current_user)):
-    if cardservice.getcardbyid(cardid, current_user["id"]) is None:
+async def logusage(cardid: int, body: Logeventrequest, current_user: dict = Depends(get_current_user)):
+    if cardsservice.getcardbyid(cardid, current_user["id"]) is None:
         raise HTTPException(status_code=404, detail="card not found")
     return usageservice.logevent(cardid, body.event_type, body.notes)
