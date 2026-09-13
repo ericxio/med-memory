@@ -25,3 +25,12 @@ class Usagehistory(BaseModel):
 class Cardusagesummary(BaseModel):
     last_taken_at: Optional[str] = None
     last_scanned_at: Optional[str] = None
+
+
+class UserHistoryItem(BaseModel):
+    id: int
+    card_id: int
+    product_name: str
+    event_type: str
+    timestamp: str
+    notes: Optional[str] = None

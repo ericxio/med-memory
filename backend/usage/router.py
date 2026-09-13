@@ -9,6 +9,8 @@ from backend.cards import service as cardsservice
 
 from backend.auth.deps import *;
 
+from backend.database import getconnection
+
 router = APIRouter()
 
 
@@ -31,24 +33,18 @@ async def logusageevent(card_id: int, request: Logeventrequest):
 
 @router.get("/api/cards/{card_id}/history",
             response_model=List[Usagehistory])
-async def gethistory(cardid: int, limit: int = 20):
-    card = cardsservice.getcardbyid(cardid)
+async def gethistory(card_id: int, limit: int = 20):
+    card = cardsservice.getcardbyid(card_id)
     if not card: raise HTTPException(404, "card does not exist")
 
     return usageservice.gethistory(card, limit)
 
 
-@router.get("/api/cards/{card_id}/usage-summary",
-            response_model=Cardusagesummary)
-async def getcardusagesummary(cardid: int):
-
-    card = cardsservice.getcardbyid(cardid)
-    if not card: raise HTTPException(404, "card does not exist")
-
-    return {
-        "last_taken_at": card.last_taken_at,
-        "last_scanned_at": card.last_scanned_at
-    }
+@router.get("/api/cards/{card_id}/usage-summary", response_model=Cardusagesummary)
+async def getcardusagesummary(card_id: int):
+    if not cardsservice.getcardbyid(card_id):
+        raise HTTPException(404, "card does not exist")
+    return usageservice.usagesummary(card_id)
 
 
 
@@ -57,3 +53,15 @@ async def logusage(cardid: int, body: Logeventrequest, current_user: dict = Depe
     if cardsservice.getcardbyid(cardid, current_user["id"]) is None:
         raise HTTPException(status_code=404, detail="card not found")
     return usageservice.logevent(cardid, body.event_type, body.notes)
+
+
+
+
+
+from backend.usage.models import UserHistoryItem
+from typing import List, Optional
+
+@router.get("/api/history", response_model=List[UserHistoryItem])
+async def getuserhistory(limit: int = 100, event_type: Optional[str] = None):
+    return usageservice.getuserhistory(limit, event_type)
+
