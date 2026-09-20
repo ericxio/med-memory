@@ -615,6 +615,16 @@ async function handlematching(file) {
                    if (data.matched) {
               // matched: open the full medicine card (name, instructions, take + read buttons)
               showcarddetail(data.card_id);
+			  
+			  if (data.matched) {
+    fetch(`/api/cards/${data.card_id}/log`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event_type: "scanned" }),
+    });
+    showcarddetail(data.card_id);
+}
+
           }
          else {
               dontshowmatchresult(data);
@@ -937,6 +947,61 @@ function back() {
 
     return  "success";
 }
+
+
+async function loadhistory() {
+   const listdiv = document.getElementById("history-list");
+    listdiv.innerHTML = "";
+    document.getElementById("history-empty").textContent = "loading...";
+    try {
+        const res = await fetch("/api/history");
+        const items = await res.json();
+        if (!items.length) {
+            document.getElementById("history-empty").textContent = "no history yet";
+            return;
+        }
+        document.getElementById("history-empty").textContent = "";
+        listdiv.innerHTML = renderhistory(items);
+    } catch (err) {
+        console.error("history failed:", err);
+        document.getElementById("history-empty").textContent = "could not load history";
+    }
+}
+
+
+
+function daylabel(ts) {
+    const d = new Date(ts), now = new Date();
+    const sameday = (a, b) => a.toDateString() === b.toDateString();
+    const yest = new Date(now); yest.setDate(now.getDate() - 1);
+    if (sameday(d, now)) return "Today";
+    if (sameday(d, yest)) return "Yesterday";
+    return d.toLocaleDateString();
+}
+
+function renderhistory(items) {
+    let html = ""
+	currentday = null;
+    for (const i of items) {
+		let day = daylabel(i.timestamp);
+		if (day != currentday) {
+			    html += `<h2 class="history-day">${day}</h2>`;
+				currentday = day;
+				
+				
+		}
+		
+		let badge = i.event_type == "taken"
+            ? `<span class="badge badge-taken">taken</span>`
+            : `<span class="badge badge-scanned">scanned</span>`;
+        html += `<div class="history-item">
+                   <span class="history-name">${i.product_name}</span>
+                   ${badge}
+                   <span class="history-time">${formattime(i.timestamp)}</span>
+                 </div>`;
+
+	}
+
 
 
 document.getElementById("uploader-button").addEventListener("click", uploadhandler);
