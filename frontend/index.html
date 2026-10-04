@@ -13,6 +13,7 @@
   <span class="brand">MedMemory</span>
   <div class="topbar-actions">
     <button id="mode-toggle" class="btn btn-nav">Senior view</button>
+    <button id="auth-logout" class="btn btn-nav">Log out</button>
   </div>
 </header>
 
@@ -155,8 +156,24 @@
   <button id="topbar-scan-2"  class="btn btn-nav" onclick="tabswitcher('upload-section')">SCAN</button>
   <button id="topbar-cards-2" class="btn btn-nav" onclick="tabswitcher('cards-section'); showcardlist();">CARDS</button>
   <button id="topbar-history-2" class="btn btn-nav" onclick="tabswitcher('history-section')">HISTORY</button>
-  
+
 </nav>
+
+<!-- ===== Auth gate (login / register) — covers the app until signed in ===== -->
+<div id="auth-gate">
+  <div class="auth-card">
+    <h1 class="auth-brand">MedMemory</h1>
+    <p id="auth-subtitle" class="status">Log in to your account</p>
+    <input type="email" id="auth-email" class="text-input" placeholder="email" autocomplete="username">
+    <input type="password" id="auth-password" class="text-input" placeholder="password" autocomplete="current-password">
+    <p id="auth-error" class="auth-error"></p>
+    <button id="auth-submit" class="btn btn-primary btn-block">Log in</button>
+    <p class="auth-toggle">
+      <span id="auth-toggle-text">No account?</span>
+      <a id="auth-toggle-link" href="#">Sign up</a>
+    </p>
+  </div>
+</div>
 
 </body>
 </html>

@@ -1,4 +1,26 @@
 
+// ===== Auth: attach the token to every /api call, and bounce to login on 401 =====
+const _rawfetch = window.fetch.bind(window);
+window.fetch = function (url, opts) {
+    opts = opts || {};
+    const u = (typeof url === "string") ? url : (url && url.url) || "";
+    const isapi = u.startsWith("/api");
+    const isauthendpoint = u.startsWith("/api/auth/login") || u.startsWith("/api/auth/register");
+    if (isapi && !isauthendpoint) {
+       const token = localStorage.getItem("token");
+       if (token) {
+          opts.headers = Object.assign({}, opts.headers, { Authorization: "Bearer " + token });
+       }
+    }
+    return _rawfetch(url, opts).then(function (res) {
+       if (res.status === 401 && isapi && !u.startsWith("/api/auth")) {
+          localStorage.removeItem("token");
+          showauth();
+       }
+       return res;
+    });
+};
+
 let currentfileid = null;
 
 let currentcardid = null;
@@ -615,8 +637,8 @@ async function handlematching(file) {
                    if (data.matched) {
               // matched: open the full medicine card (name, instructions, take + read buttons)
               showcarddetail(data.card_id);
-			  
-			  if (data.matched) {
+            
+            if (data.matched) {
     fetch(`/api/cards/${data.card_id}/log`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -760,7 +782,7 @@ function selectvoice() {
 }
 
 let isreading = false;
-let currentmode = "unsenior";
+let currentmode = "senior";
 function handletts() {
     console.log("reading...");
     if (isreading) {
@@ -980,18 +1002,18 @@ function daylabel(ts) {
 }
 
 function renderhistory(items) {
-    let html = ""
-	currentday = null;
+    let html = "";
+    let currentday = null;
     for (const i of items) {
-		let day = daylabel(i.timestamp);
-		if (day != currentday) {
-			    html += `<h2 class="history-day">${day}</h2>`;
-				currentday = day;
-				
-				
-		}
-		
-		let badge = i.event_type == "taken"
+       let day = daylabel(i.timestamp);
+       if (day != currentday) {
+              html += `<h2 class="history-day">${day}</h2>`;
+             currentday = day;
+             
+             
+       }
+       
+       let badge = i.event_type == "taken"
             ? `<span class="badge badge-taken">taken</span>`
             : `<span class="badge badge-scanned">scanned</span>`;
         html += `<div class="history-item">
@@ -1000,7 +1022,10 @@ function renderhistory(items) {
                    <span class="history-time">${formattime(i.timestamp)}</span>
                  </div>`;
 
-	}
+    }
+
+    return html;
+}
 
 
 
@@ -1071,4 +1096,109 @@ document.getElementById("senior-file-input").addEventListener("change", function
 });
 
 
-initmode(); //init mode
+// ===== Auth UI =====
+let authmode = "login";   // "login" | "register"
+
+function setauthmode(mode) {
+    authmode = mode;
+    document.getElementById("auth-error").textContent = "";
+    if (mode === "login") {
+       document.getElementById("auth-subtitle").textContent = "Log in to your account";
+       document.getElementById("auth-submit").textContent = "Log in";
+       document.getElementById("auth-toggle-text").textContent = "No account?";
+       document.getElementById("auth-toggle-link").textContent = "Sign up";
+       document.getElementById("auth-password").setAttribute("autocomplete", "current-password");
+    } else {
+       document.getElementById("auth-subtitle").textContent = "Create an account";
+       document.getElementById("auth-submit").textContent = "Sign up";
+       document.getElementById("auth-toggle-text").textContent = "Already have an account?";
+       document.getElementById("auth-toggle-link").textContent = "Log in";
+       document.getElementById("auth-password").setAttribute("autocomplete", "new-password");
+    }
+}
+
+function showauth() {
+    document.getElementById("auth-gate").hidden = false;
+    document.getElementById("auth-password").value = "";
+    setauthmode("login");
+}
+
+function startapp() {
+    document.getElementById("auth-gate").hidden = true;
+    initmode();
+}
+
+async function submitauth() {
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value;
+    const errorel = document.getElementById("auth-error");
+    errorel.textContent = "";
+    if (!email || !password) { errorel.textContent = "enter your email and password"; return; }
+
+    const submitbtn = document.getElementById("auth-submit");
+    submitbtn.disabled = true;
+    try {
+       let res;
+       if (authmode === "register") {
+          res = await fetch("/api/auth/register", {
+             method: "POST",
+             headers: { "Content-Type": "application/json" },
+             body: JSON.stringify({ email: email, password: password }),
+          });
+       } else {
+          const form = new URLSearchParams();
+          form.set("username", email);     // OAuth2 form uses "username" for the email
+          form.set("password", password);
+          res = await fetch("/api/auth/login", {
+             method: "POST",
+             headers: { "Content-Type": "application/x-www-form-urlencoded" },
+             body: form,
+          });
+       }
+
+       if (!res.ok) {
+          let msg = (authmode === "register") ? "could not sign up" : "incorrect email or password";
+          if (res.status === 400) msg = "email already registered";
+          if (res.status === 422) msg = "password must be at least 8 characters";
+          errorel.textContent = msg;
+          return;
+       }
+       const data = await res.json();
+       localStorage.setItem("token", data.access_token);
+       startapp();
+    } catch (err) {
+       console.error("auth failed:", err);
+       errorel.textContent = "network error, please try again";
+    } finally {
+       submitbtn.disabled = false;
+    }
+}
+
+function dologout() {
+    localStorage.removeItem("token");
+    showauth();
+}
+
+// boot: decide whether to show the app or the login gate
+async function bootauth() {
+    const token = localStorage.getItem("token");
+    if (!token) { showauth(); return; }
+    try {
+       const res = await fetch("/api/auth/me");   // wrapper attaches the token
+       if (res.ok) { startapp(); } else { showauth(); }
+    } catch (err) {
+       showauth();
+    }
+}
+
+document.getElementById("auth-submit").addEventListener("click", submitauth);
+document.getElementById("auth-password").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") submitauth();
+});
+document.getElementById("auth-toggle-link").addEventListener("click", function (e) {
+    e.preventDefault();
+    setauthmode(authmode === "login" ? "register" : "login");
+});
+document.getElementById("auth-logout").addEventListener("click", dologout);
+
+bootauth(); //init auth, then the app

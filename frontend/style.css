@@ -409,3 +409,38 @@ input.editing, textarea.editing {
   .btn-row { flex-direction: column; }
   .btn-row .btn { width: 100%; }
 }
+/* ---------- auth gate ---------- */
+#auth-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  background: var(--color-bg);
+}
+.auth-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-4);
+}
+.auth-brand {
+  text-align: center;
+  color: var(--color-primary);
+  margin: 0 0 var(--space-1);
+}
+#auth-subtitle { text-align: center; margin-bottom: var(--space-3); }
+.auth-card .text-input { margin-bottom: var(--space-2); }
+.auth-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-small);
+  min-height: 1.2em;
+  margin: 0 0 var(--space-2);
+}
+.auth-toggle { text-align: center; margin: var(--space-3) 0 0; color: var(--color-muted); font-size: var(--font-size-small); }
+.auth-toggle a { color: var(--color-primary); font-weight: 600; text-decoration: none; }
