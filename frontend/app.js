@@ -201,10 +201,8 @@ function showcardform() {
     
     document.getElementById("form-profile").value = "default";
     document.getElementById("form-productname").value = "";
-    document.getElementById("form-strength").value = "";
+    document.getElementById("form-frequency").value = "";
     document.getElementById("form-instructions").value = "";
-    document.getElementById("form-notes").value = "";
-    document.getElementById("form-time").value = "";
     
     document.getElementById("form-status").innerHTML = " ";
 
@@ -215,10 +213,8 @@ function showcardform() {
 async function savecard() {
     let profile =  document.getElementById("form-profile").value || "default";
     let productname = document.getElementById("form-productname").value;
-    let strength = document.getElementById("form-strength").value;
+    let frequency = document.getElementById("form-frequency").value;
     let instructions  = document.getElementById("form-instructions").value;
-    let notes = document.getElementById("form-notes").value;
-    let time = document.getElementById("form-time").value;
     let warnings = document.getElementById("form-warnings").value;
 
     if (productname == "") {
@@ -226,15 +222,18 @@ async function savecard() {
 
        return;
     }
-    
+    if (!frequency || parseInt(frequency) < 1) {
+       document.getElementById("form-status").innerHTML = "error: please enter how many times per day";
+
+       return;
+    }
+
     let send = {
               profile_name: profile,
               product_name: productname,
-              strength: strength,        // empty string becomes null
+              frequency: parseInt(frequency),
               directions: instructions,
             warnings: warnings,
-              personal_notes: notes,
-              reminder_times: time,
               ocr_text: document.getElementById("form-ocrtext").value,
               image_path: document.getElementById("form-imagepath").value
           }
@@ -313,10 +312,6 @@ function rendercard(card) {
        html += "<img class=\"card-list-image\" src=\"/uploads/" + card.image_path + "\" alt=\"\">";
     }
     html += "<h1>" + card.product_name + "</h1>";
-       html += "<p>" + card.profile_name + "</p>";
-
-    html += "<p>" + card.strength + "</p>";
-
     html += "</div>";
     
     //console.log(html);
@@ -361,6 +356,37 @@ function reminderitem(card) {
 
 
     
+async function loadtodaystatus(cardid) {
+    const div = document.getElementById("usage-summary");
+    div.textContent = "";
+    try {
+        const res = await fetch(`/api/cards/${cardid}/usage-summary`);
+        const data = await res.json();
+        const n = data.taken_today || 0;
+        div.textContent = (n === 0)
+            ? "Not taken yet today"
+            : `Taken today: ${n} time${n !== 1 ? "s" : ""}`;
+
+        // if already taken enough times today, warn (shown in warnings + read aloud)
+        const freq = window.card && window.card.frequency;
+        if (freq && n >= freq) {
+            const msg = `You have already taken this medicine ${n} time${n !== 1 ? "s" : ""} today. You have reached today's limit — please do not take any more today.`;
+            const warnEl = document.getElementById("detail-warnings");
+            if (warnEl && !warnEl.value.includes("do not take any more")) {
+                warnEl.value = (warnEl.value.trim() ? warnEl.value.trim() + "\n\n" : "") + msg;
+                // grow the box so the full warning is visible (no scrolling for seniors)
+                warnEl.style.height = "auto";
+                warnEl.style.height = warnEl.scrollHeight + "px";
+            }
+            if (window.card && !String(window.card.warnings || "").includes("do not take any more")) {
+                window.card.warnings = (String(window.card.warnings || "").trim() ? window.card.warnings.trim() + " " : "") + msg;
+            }
+        }
+    } catch (e) {
+        console.error("today status failed:", e);
+    }
+}
+
 async function showcarddetail(cardid, editmode) {
     currentcardid = cardid;
     document.getElementById("overlay").style.display="block";
@@ -376,9 +402,13 @@ async function showcarddetail(cardid, editmode) {
 
     rendercarddetail(card);
 
-    // opened from the cards list -> go straight into the editable info view
-    if (editmode) editcard();
-    else canceledit();
+    if (editmode) {
+        editcard();
+        document.getElementById("usage-summary").textContent = "";   // no status while editing
+    } else {
+        canceledit();
+        loadtodaystatus(cardid);   // show today's intake status in the view
+    }
 
     }
 
@@ -391,25 +421,25 @@ async function showcarddetail(cardid, editmode) {
     
 }
 
+function clean(v) {
+    // treat null / undefined / the literal string "undefined" as empty
+    return (v == null || v === "undefined") ? "" : v;
+}
+
 function rendercarddetail(card) {
     console.log(card);
     let html =     `<label class="form-label" for="detail-name">product name</label>
-    <input id="detail-name" class="card-name" value="${card.product_name}" readonly>
+    <input id="detail-name" class="card-name" value="${clean(card.product_name)}" readonly>
 
-    <label class="form-label" for="detail-strength">strength</label>
-    <input id="detail-strength" class="card-volatile" value="${card.strength}" readonly>
+    <label class="form-label" for="detail-frequency">times per day</label>
+    <input id="detail-frequency" type="number" min="1" step="1" class="card-volatile" value="${card.frequency || ""}" readonly>
 
     <label class="form-label" for="detail-instructions">instructions</label>
-    <textarea id="detail-instructions" class="card-instructions" rows="3" readonly>${card.directions || "[no instructions]"}</textarea>
-
-    <label class="form-label" for="detail-notes">notes</label>
-    <textarea id="detail-notes" rows="3" class="card-notes" readonly>${card.personal_notes}</textarea>
+    <textarea id="detail-instructions" class="card-instructions" rows="3" readonly>${clean(card.directions) || "[no instructions]"}</textarea>
 
     <label class="form-label" for="detail-warnings">warnings</label>
-    <textarea id="detail-warnings" rows="2" class="card-warnings" readonly>${card.warnings}</textarea>
+    <textarea id="detail-warnings" rows="2" class="card-warnings" readonly>${clean(card.warnings)}</textarea>
 
-    <label class="form-label" for="detail-time">reminder time</label>
-    <input id="detail-time" type="time" value="${card.reminder_times}" readonly>
      `
      
      document.getElementById("card-detail-content").innerHTML = html; 
@@ -433,10 +463,8 @@ function editcard2() { //unused
     
     document.getElementById("form-profile").value = "default";
     document.getElementById("form-productname").value = "";
-    document.getElementById("form-strength").value = "";
+    document.getElementById("form-frequency").value = "";
     document.getElementById("form-instructions").value = "";
-    document.getElementById("form-notes").value = "";
-    document.getElementById("form-time").value = "";
     
     document.getElementById("form-status").innerHTML = " ";
 
@@ -445,7 +473,7 @@ function editcard2() { //unused
 }
 
 function editcard() {
-    let inputlist = ["notes", "warnings", "instructions", "strength", "name", "time"];
+    let inputlist = ["warnings", "instructions", "name", "frequency"];
     
        for (let i of inputlist ) {
           document.getElementById("detail-"+i).readOnly=false;
@@ -456,15 +484,16 @@ function editcard() {
     
     }
     
-    document.getElementById("edit-submit").style.display = "inline";
-    document.getElementById("edit-cancel").style.display = "inline";
+    document.getElementById("edit-submit").style.display = "inline-flex";
+    document.getElementById("edit-cancel").style.display = "inline-flex";
     document.getElementById("card-edit").style.display = "none";
-    document.getElementById("card-yeet").style.display = "none";
-    
+    // keep RECYCLE (delete) available while editing, in caregiver mode only
+    document.getElementById("card-yeet").style.display = (currentmode == "unsenior") ? "inline-flex" : "none";
+
 }
 
 function canceledit() {
-    let inputlist = ["notes", "warnings", "instructions", "strength", "name", "time"];
+    let inputlist = ["warnings", "instructions", "name", "frequency"];
     
        for (let i of inputlist ) {
           document.getElementById("detail-"+i).readOnly=true;
@@ -491,26 +520,25 @@ async function submitedit() {
     
     //let profile =    document.getElementById("form-profile").value;
     let productname = document.getElementById("detail-name").value;
-    let strength = document.getElementById("detail-strength").value;
+    let frequency = document.getElementById("detail-frequency").value;
     let instructions  = document.getElementById("detail-instructions").value;
-    let notes = document.getElementById("detail-notes").value;
-    let time = document.getElementById("detail-time").value;
     let warnings = document.getElementById("detail-warnings").value;
-    
+
     if (productname == "") {
-       //document.getElementById("form-status").innerHTML = "error: profile or product name missing";
-       
        return;
     }
-    
+    if (!frequency || parseInt(frequency) < 1) {
+       document.getElementById("form-status").innerHTML = "error: times per day is required";
+       return;
+    }
+
     let send = {
-              //profile_name: profile,
               product_name: productname,
-              strength: strength,    
+              frequency: parseInt(frequency),
               directions: instructions,
             warnings: warnings,
-              personal_notes: notes,
-              reminder_times: time,
+              // personal_notes omitted: notes are not shown/edited on the card page,
+              // and the backend (exclude_none=True) preserves the card's existing notes
               // ocr_text intentionally omitted: the edit form doesn't touch it,
               // and the backend (exclude_none=True) preserves the card's existing ocr_text
           }
@@ -519,19 +547,16 @@ async function submitedit() {
          
     //document.getElementById("form-status").innerHTML = "saving..."
     
-    fetch(`/api/cards/${currentcardid}`, {
+    await fetch(`/api/cards/${currentcardid}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(send)
-          })
-         
-    //document.getElementById("form-status").innerHTML = "card saved";
-    
-    
+          });
+
+    // close the modal (hides the overlay too) and go back to the refreshed cards list
     canceledit();
-
-
-
+    closedetail();
+    showcardlist();
 }
 
 async function deletecard() {
@@ -564,12 +589,9 @@ async function handleautofill() {
         showcardform();
         
     //document.getElementById("form-profile").value = result.;
-    document.getElementById("form-productname").value = result.product_name;
-    document.getElementById("form-strength").value = result.strength;
-    document.getElementById("form-instructions").value = result.directions;
-    //document.getElementById("form-notes").value = result.personal_notes;
-    //document.getElementById("form-time").value;
-    document.getElementById("form-warnings").value = result.warnings;
+    document.getElementById("form-productname").value = result.product_name || "";
+    document.getElementById("form-instructions").value = result.directions || "";
+    document.getElementById("form-warnings").value = result.warnings || "";
     }
     
     catch(e) {
@@ -635,18 +657,13 @@ async function handlematching(file) {
          document.getElementById("identify-spinner").style.display = "none";
 
                    if (data.matched) {
-              // matched: open the full medicine card (name, instructions, take + read buttons)
+              // auto-log a "scanned" event, then open the full medicine card
+              fetch(`/api/cards/${data.card_id}/log`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ event_type: "scanned" }),
+              });
               showcarddetail(data.card_id);
-            
-            if (data.matched) {
-    fetch(`/api/cards/${data.card_id}/log`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ event_type: "scanned" }),
-    });
-    showcarddetail(data.card_id);
-}
-
           }
          else {
               dontshowmatchresult(data);
@@ -706,11 +723,7 @@ function buildtts(card) {
     let intro = "";
     
     if (card.product_name) {
-       intro +=   `now reading instructions for ${card.product_name}`
-       
-       if (card.strength) intro +=`   , ${card.strength}.`;
-       
-       else intro += ".";
+       intro +=   `now reading instructions for ${card.product_name}.`;
        
        
     }
@@ -722,25 +735,8 @@ function buildtts(card) {
     if (has(card.warnings)) {
               parts.push(`warning: ${card.warnings}`);
          }
-        
-        if (has(card.personal_notes)) {
-              parts.push(`note: ${card.personal_notes}`);
-         }
-        
-                  if (has(card.reminder_times)) {
-                   let realremindertimeformatted = new Date(`1970-01-01T${card.reminder_times}`).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit"
-})
-              parts.push(`your reminder is set for ${card.realremindertimeformatted}.`);
-            console.log(card.realremindertimeformatted);
-          }
-         
-         //if (has(card.last_taken_at)) {
-    //          parts.push(`you last took ts at ${formatTimeAgo(card.last_taken_at)}.`);
-    //      }
-        
-        return parts.join(" ");
+
+        return parts;   // array of items; spoken one by one with a pause between
 
         
 }
@@ -782,52 +778,52 @@ function selectvoice() {
 }
 
 let isreading = false;
+let isspeaking = false;
 let currentmode = "senior";
+
+let ttspausetimer = null;
+const TTS_PAUSE_MS = 1000;   // pause between each item (1 s)
+
 function handletts() {
-    console.log("reading...");
-    if (isreading) {
-       stoptts();
-       return;
-    }
-    
+    // button is a toggle: if already reading, stop
+    if (isspeaking) { stopspeaking(); return; }
+
     const card = window.card;
     if (!card) return;
-    
-    const script = buildtts(card);
-    
+
+    const parts = buildtts(card);   // array of items
     speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(script);
-    utterance.rate = 0.9;
+    const voice = selectvoice();
 
-const voice = selectvoice();
-          if (voice) utterance.voice = voice;
-         
-                   utterance.onstart = () => {
-              isspeaking = true;
-              updatereadaloudbutton(true);
-          };
-          utterance.onend = () => {
-              isspeaking = false;
-              updatereadaloudbutton(false);
-          };
-          utterance.onerror = (event) => {
-              console.error("error:", event.error);
-              isspeaking = false;
-              updatereadaloudbutton(false);
-            stopspeaking();
-          };
-          console.log("speech has officially started")
-          speechSynthesis.speak(utterance);
-         
-         
+    isspeaking = true;
+    updatereadaloudbutton(true);
 
-
-    
+    let i = 0;
+    function speaknext() {
+        if (!isspeaking) return;                 // stopped by the user
+        if (i >= parts.length) {                 // finished all items
+            isspeaking = false;
+            updatereadaloudbutton(false);
+            return;
+        }
+        const u = new SpeechSynthesisUtterance(parts[i]);
+        u.rate = 0.9;
+        if (voice) u.voice = voice;
+        i++;
+        u.onend = () => { ttspausetimer = setTimeout(speaknext, TTS_PAUSE_MS); };
+        u.onerror = (event) => {
+            console.error("tts error:", event.error);
+            isspeaking = false;
+            updatereadaloudbutton(false);
+        };
+        speechSynthesis.speak(u);
+    }
+    speaknext();
 }
 
 function stopspeaking(){
      speechSynthesis.cancel();
+     if (ttspausetimer) { clearTimeout(ttspausetimer); ttspausetimer = null; }
     isspeaking = false;
     updatereadaloudbutton(false);
                        //document.getElementById("card-readaloud").addEventListener("click", handletts);
@@ -837,18 +833,14 @@ function stopspeaking(){
 function updatereadaloudbutton(speaking){
  let btn = document.getElementById("card-readaloud");
        if (speaking) {
-           btn.textContent = "STOP";
+           btn.innerHTML = '<span class="btn-icon">&#9209;</span>Stop';
            btn.classList.add("stopreadaloud");
            btn.classList.remove("readaloud");
-          //document.getElementById("card-readaloud").addEventListener("click", stopspeaking);
-
-       } 
+       }
        else {
-           btn.textContent = "READ ALOUD";
+           btn.innerHTML = '<span class="btn-icon">&#128266;</span>Read aloud';
            btn.classList.remove("stopreadaloud");
            btn.classList.add("readaloud");
-                    //document.getElementById("card-readaloud").addEventListener("click", handletts);
-
 }}
 
 
@@ -858,17 +850,15 @@ async  function handletaken() {
     const cardid = currentcardid;
     if (!cardid)return;
 
-    let responce = await fetch(`/api/cards/${cardid}/log`, {
+    await fetch(`/api/cards/${cardid}/log`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ event_type: "taken" })
           });
 
-                   const data = await responce.json();
-          loadusagesummary(cardid);
-
-
-     
+    // close the card and return to the senior home screen
+    closedetail();
+    tabswitcher("senior-home-section");
 }
 
 async function loadusagesummary(cardid) {
@@ -910,8 +900,9 @@ function formattime(ts) {
     if (diffmins < 60) return `${diffmins} minute${diffmins !== 1 ? 's' : ''} ago`
     if (diffmins < 1440) return `${Math.floor(diffmins/60)} hour${Math.floor(diffmins/60) !== 1 ? 's' : ''} ago`
 
-    
-    
+    let days = Math.floor(diffmins / 1440);
+    if (days < 7) return `${days} day${days !== 1 ? 's' : ''} ago`;
+    return date.toLocaleDateString();
 }
 
 function initmode() {
@@ -1043,8 +1034,12 @@ document.getElementById("createnewcard").addEventListener("click", showcardform)
  document.getElementById("card-yeet").addEventListener("click", () => {deletecard();canceledit();closedetail()});
 
 
-document.getElementById("edit-submit").addEventListener("click", () => {submitedit();showcardlist()});
-document.getElementById("edit-cancel").addEventListener("click", canceledit);
+document.getElementById("edit-submit").addEventListener("click", submitedit);
+document.getElementById("edit-cancel").addEventListener("click", () => {
+    canceledit();      // reset the edit UI for next time
+    closedetail();     // close the modal + overlay
+    showcardlist();    // back to the cards list
+});
 
     document.getElementById("autocreatenewcard").addEventListener("click", handleautofill)
 
@@ -1083,10 +1078,59 @@ document.getElementById("identify-back").addEventListener("click", () => tabswit
 document.getElementById("mode-toggle").addEventListener("click", switchmode);
 document.getElementById("toggle-orb").addEventListener("click", switchmode);
 
-// senior-mode photo button -> file picker -> match (shown on the identify screen)
-document.getElementById("senior-photo-btn").addEventListener("click", () => {
-    document.getElementById("senior-file-input").click();
-});
+// ===== Camera capture (live webcam) =====
+let camerastream = null;
+
+async function opencamera() {
+	// needs a secure context (https or localhost); otherwise fall back to a file picker
+	if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+		document.getElementById("senior-file-input").click();
+		return;
+	}
+	try {
+		camerastream = await navigator.mediaDevices.getUserMedia({
+			video: { facingMode: "environment" },
+			audio: false,
+		});
+		const video = document.getElementById("camera-stream");
+		video.srcObject = camerastream;
+		document.getElementById("camera-view").hidden = false;
+	} catch (err) {
+		console.error("camera unavailable:", err);
+		// no camera, or permission denied -> fall back to uploading a file
+		document.getElementById("senior-file-input").click();
+	}
+}
+
+function closecamera() {
+	if (camerastream) {
+		camerastream.getTracks().forEach(t => t.stop());
+		camerastream = null;
+	}
+	document.getElementById("camera-view").hidden = true;
+}
+
+function capturephoto() {
+	const video = document.getElementById("camera-stream");
+	const canvas = document.getElementById("camera-canvas");
+	canvas.width = video.videoWidth;
+	canvas.height = video.videoHeight;
+	canvas.getContext("2d").drawImage(video, 0, 0);
+	canvas.toBlob(function (blob) {
+		closecamera();
+		if (!blob) return;
+		const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+		tabswitcher("identify-section");
+		handlematching(file);
+	}, "image/jpeg", 0.9);
+}
+
+// senior-mode photo button -> open the webcam (falls back to a file picker)
+document.getElementById("senior-photo-btn").addEventListener("click", opencamera);
+document.getElementById("camera-capture").addEventListener("click", capturephoto);
+document.getElementById("camera-cancel").addEventListener("click", closecamera);
+
+// fallback path: if the file picker is used instead, still run the match
 document.getElementById("senior-file-input").addEventListener("change", function () {
     const file = this.files[0];
     if (file) {

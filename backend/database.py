@@ -35,6 +35,7 @@ def initdatabase():
             warnings TEXT,
             personal_notes TEXT,
             reminder_times TEXT,
+            frequency INTEGER,
             ocr_text TEXT,
             image_path TEXT,
             created_at TEXT,

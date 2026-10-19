@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MedMemory</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261018g">
+  <script src="app.js?v=20261018g" defer></script>
 </head>
 <body>
 
@@ -25,7 +25,7 @@
     <input type="file" id="photo" accept="image/*" capture="environment" class="file-input">
     <button id="uploader-button" class="btn btn-danger btn-block">UPLOAD</button>
     <img id="preview" alt="preview" style="display:none">
-    <p id="uploadstatus" class="status">...</p>
+    <p id="uploadstatus" class="status"></p>
 
     <h1>Text extraction</h1>
     <button id="ocr-button" class="btn btn-warning">GET TEXT</button>
@@ -37,7 +37,7 @@
         <button id="autocreatenewcard" class="btn btn-info">AUTOFILL CARD</button>
       </div>
     </div>
-    <p id="ocr-status" class="status">waiting...</p>
+    <p id="ocr-status" class="status"></p>
   </section>
 
   <!-- ===== Cards list ===== -->
@@ -48,11 +48,11 @@
     <p id="card-list-empty" class="status"></p>
   </section>
 
-  <!-- ===== Medication history (placeholder — feature planned) ===== -->
+  <!-- ===== Medication history ===== -->
   <section id="history-section" class="section panel">
     <h1>Medication history</h1>
-    <p class="status">Coming soon.</p>
-    <p class="status">This page will show when each medicine was taken and scanned.</p>
+    <div id="history-list"></div>
+    <p id="history-empty" class="status"></p>
   </section>
 
   <!-- ===== Card create / edit form ===== -->
@@ -66,24 +66,17 @@
     <label class="form-label" for="form-productname">product name</label>
     <input type="text" id="form-productname" class="text-input" required>
 
-    <label class="form-label" for="form-strength">strength</label>
-    <input type="text" id="form-strength" class="text-input">
+    <label class="form-label" for="form-frequency">times per day (required)</label>
+    <input type="number" id="form-frequency" class="text-input" min="1" step="1" required>
 
     <label class="form-label" for="form-instructions">instructions</label>
     <textarea id="form-instructions" class="text-input" rows="3"></textarea>
 
-    <label class="form-label" for="form-notes">notes</label>
-    <textarea id="form-notes" class="text-input" rows="3"></textarea>
-
     <label class="form-label" for="form-warnings">warnings</label>
     <textarea id="form-warnings" class="text-input" rows="2"></textarea>
 
-    <label class="form-label" for="form-ocrtext">ocr text</label>
-    <textarea id="form-ocrtext" class="text-input" rows="3" readonly></textarea>
-
-    <label class="form-label" for="form-time">time</label>
-    <input type="time" id="form-time" class="text-input">
-
+    <!-- kept but hidden: OCR text is needed for bottle matching, not shown to the caregiver -->
+    <textarea id="form-ocrtext" hidden></textarea>
     <input type="text" id="form-imagepath" hidden>
 
     <p id="form-status" class="status">...</p>
@@ -102,12 +95,12 @@
       <div id="card-detail-content" class="card"></div>
       <div id="usage-summary" class="last-taken"></div>
       <div class="btn-row">
-        <button id="card-taken" class="btn btn-primary senior-only">I took this</button>
+        <button id="card-taken" class="btn btn-primary senior-only btn-senior"><span class="btn-icon">&#9989;</span>I took this</button>
         <button id="card-edit" class="btn btn-secondary unsenior-only">EDIT</button>
         <button id="card-yeet" class="btn btn-danger unsenior-only">RECYCLE</button>
         <button id="edit-submit" class="btn btn-success unsenior-only" style="display:none;">SUBMIT</button>
         <button id="edit-cancel" class="btn btn-secondary unsenior-only" style="display:none;">CANCEL</button>
-        <button id="card-readaloud" class="btn btn-info senior-only">READ ALOUD</button>
+        <button id="card-readaloud" class="btn btn-info senior-only btn-senior"><span class="btn-icon">&#128266;</span>Read aloud</button>
       </div>
     </div>
   </section>
@@ -127,7 +120,7 @@
       <input type="file" id="identify-input-alt" accept="image/*" class="file-input">
     </div>
 
-    <button id="identify-back" class="btn btn-secondary">Back</button>
+    <button id="identify-back" class="btn btn-secondary btn-senior"><span class="btn-icon">&#8592;</span>Back</button>
   </section>
 
   <!-- ===== Senior home ===== -->
@@ -155,9 +148,19 @@
 <nav id="unsenior-nav" class="nav-bar">
   <button id="topbar-scan-2"  class="btn btn-nav" onclick="tabswitcher('upload-section')">SCAN</button>
   <button id="topbar-cards-2" class="btn btn-nav" onclick="tabswitcher('cards-section'); showcardlist();">CARDS</button>
-  <button id="topbar-history-2" class="btn btn-nav" onclick="tabswitcher('history-section')">HISTORY</button>
+  <button id="topbar-history-2" class="btn btn-nav" onclick="tabswitcher('history-section'); loadhistory();">HISTORY</button>
 
 </nav>
+
+<!-- ===== Camera capture (live webcam) ===== -->
+<div id="camera-view" hidden>
+  <video id="camera-stream" autoplay playsinline></video>
+  <div class="camera-controls">
+    <button id="camera-capture" class="btn btn-primary btn-senior"><span class="btn-icon"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>Capture</button>
+    <button id="camera-cancel" class="btn btn-secondary btn-senior"><span class="btn-icon">&#10005;</span>Cancel</button>
+  </div>
+  <canvas id="camera-canvas" hidden></canvas>
+</div>
 
 <!-- ===== Auth gate (login / register) — covers the app until signed in ===== -->
 <div id="auth-gate">
@@ -177,8 +180,3 @@
 
 </body>
 </html>
-
-<section id="history-section">   <div id="history-list"></div>
-  <p id="history-empty" class="status"></p>
-
-</section>

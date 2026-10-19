@@ -28,13 +28,12 @@ def similarity(a,b):
 
 
 
-def findmatch(text):
+def findmatch(text, user_id):
     processedtext = ocrservice.lowconfidencefilterer(text)
     realtext = " ".join(i["text"] for i in processedtext)
 
     print(realtext)
-    cards = cardservice.getallcards(
-    )
+    cards = cardservice.getallcards(user_id)
 
     message = {
             "matched": False,
@@ -58,7 +57,7 @@ def findmatch(text):
             message["best_product"] = i["product_name"]
             message["new_ocr_text"] = i["ocr_text"]
             message["card_id"] = i["id"]
-            message["card"] = cardservice.getcardbyid(i["id"])
+            message["card"] = cardservice.getcardbyid(i["id"], user_id)
             message["product_name"] = i["product_name"]
             #message["message"] = "card found"
 
@@ -76,11 +75,11 @@ def findmatch(text):
 # print(similarity(a,b))
 #
 
-def matchbyimage(image):
+def matchbyimage(image, user_id):
     path = uploaddir / image
     ocrtext = ocrservice.lowconfidencefilterer(ocrservice.textextracter(path), threshold=ocrthreshold)
 
-    return findmatch(ocrtext)
+    return findmatch(ocrtext, user_id)
 
 
 

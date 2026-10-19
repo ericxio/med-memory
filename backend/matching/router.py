@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional
 from . import service
+from backend.auth.deps import get_current_user
 
 router = APIRouter()
 
@@ -23,9 +24,9 @@ class Matchresponce(BaseModel):
 
 
 @router.post("/api/match", response_model=Matchresponce)
-async def matchbottle(matchrequest: Matchrequest):
+async def matchbottle(matchrequest: Matchrequest, current_user: dict = Depends(get_current_user)):
     try:
-        result = service.matchbyimage(matchrequest.filename)
+        result = service.matchbyimage(matchrequest.filename, current_user["id"])
         return result
     except FileNotFoundError:
         raise HTTPException(status_code=404,

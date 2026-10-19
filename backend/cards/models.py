@@ -3,8 +3,8 @@ from typing import Optional
 
 
 class Createcard(BaseModel):
-    profile_name: str
     product_name: str
+    frequency: int
     strength: Optional[str] = None
     directions: Optional[str] = None
     warnings: Optional[str] = None
@@ -15,8 +15,8 @@ class Createcard(BaseModel):
 
 
 class Updatecard(BaseModel):
-    profile_name: Optional[str] = None
     product_name: Optional[str] = None
+    frequency: Optional[int] = None
     strength: Optional[str] = None
     directions: Optional[str] = None
     warnings: Optional[str] = None
@@ -25,10 +25,12 @@ class Updatecard(BaseModel):
     ocr_text: Optional[str] = None
     image_path: Optional[str] = None
 
+
 class Cardresponce(BaseModel):
     id: int
-    profile_name: str
+    user_id: int
     product_name: str
+    frequency: Optional[int] = None
     strength: Optional[str] = None
     directions: Optional[str] = None
     warnings: Optional[str] = None
@@ -38,5 +40,3 @@ class Cardresponce(BaseModel):
     image_path: Optional[str] = None
     created_at: str
     updated_at: str
-
-

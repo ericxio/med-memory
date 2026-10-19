@@ -10,10 +10,10 @@ def createcard(user_id, card):
     con = getconnection(); cur = con.cursor()
     cur.execute(
         "INSERT INTO cards (user_id, product_name, strength, directions, warnings, "
-        "personal_notes, reminder_times, ocr_text, image_path, created_at, updated_at) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "personal_notes, reminder_times, frequency, ocr_text, image_path, created_at, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (user_id, card.product_name, card.strength, card.directions, card.warnings,
-         card.personal_notes, card.reminder_times, card.ocr_text, card.image_path, time, time),
+         card.personal_notes, card.reminder_times, card.frequency, card.ocr_text, card.image_path, time, time),
     )
     con.commit(); newid = cur.lastrowid; con.close()
     return getcardbyid(newid, user_id)
@@ -35,17 +35,24 @@ def updatecard(cardid, user_id, update):
     if card is None:
         return None
 
-def deletecard(cardid):
-    table = getconnection()
-    cur = table.cursor()
+    fields = update.model_dump(exclude_none=True)
+    if len(fields) == 0:
+        return card
 
-    cur.execute("DELETE FROM cards WHERE id = ?", (cardid,))
+    fields["updated_at"] = datetime.now().isoformat()
 
+    con = getconnection(); cur = con.cursor()
+    for key in fields:
+        # column names come from the Updatecard model (a fixed set), not user input
+        cur.execute(f"UPDATE cards SET {key} = ? WHERE id = ? AND user_id = ?",
+                    (fields[key], cardid, user_id))
+    con.commit(); con.close()
+    return getcardbyid(cardid, user_id)
+
+def deletecard(cardid, user_id):
+    con = getconnection(); cur = con.cursor()
+    cur.execute("DELETE FROM cards WHERE id = ? AND user_id = ?", (cardid, user_id))
     rowcount = cur.rowcount
-
-    table.commit()
-
-    table.close()
-
+    con.commit(); con.close()
     return rowcount > 0
 
