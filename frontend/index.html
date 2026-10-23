@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MedMemory</title>
-  <link rel="stylesheet" href="style.css?v=20261018g">
-  <script src="app.js?v=20261018g" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261019g">
+  <script src="app.js?v=20261019g" defer></script>
 </head>
 <body>
 
-<header id="topbar" class="unsenior-only">
+<header id="topbar">
   <span class="brand">MedMemory</span>
   <div class="topbar-actions">
-    <button id="mode-toggle" class="btn btn-nav">Senior view</button>
-    <button id="auth-logout" class="btn btn-nav">Log out</button>
+    <button id="mode-toggle" class="btn btn-nav">Senior View</button>
+    <button id="auth-logout" class="btn btn-nav unsenior-only">Log out</button>
   </div>
 </header>
 
@@ -23,7 +23,7 @@
   <section id="upload-section" class="section panel">
     <h1>Upload image</h1>
     <input type="file" id="photo" accept="image/*" capture="environment" class="file-input">
-    <button id="uploader-button" class="btn btn-danger btn-block">UPLOAD</button>
+    <button id="uploader-button" class="btn btn-primary btn-block">UPLOAD</button>
     <img id="preview" alt="preview" style="display:none">
     <p id="uploadstatus" class="status"></p>
 
@@ -125,8 +125,7 @@
 
   <!-- ===== Senior home ===== -->
   <section id="senior-home-section" class="section senior-home">
-    <button id="toggle-orb" class="toggle-orb" title="Back to setup">&#9881; Setup</button>
-    <p id="senior-profile-name" class="senior-title">My Medicines</p>
+    <p id="senior-profile-name" class="senior-title">Check my medicine</p>
     <button id="senior-photo-btn" class="btn btn-senior-photo">
       <span class="senior-photo-icon">&#128247;</span>
       <span>Tap to take a picture</span>
@@ -141,8 +140,9 @@
 <div id="overlay" style="display:none;"></div>
 
 <!-- ===== Bottom navs (mode-dependent) ===== -->
-<nav id="senior-nav" class="nav-bar senior-nav">
-  <span class="nav-title">MedMemory</span>
+<nav id="senior-nav" class="nav-bar">
+  <button id="senior-identify" class="btn btn-identify" onclick="opencamera()"><span class="btn-icon"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>CHECK</button>
+  <button id="senior-history" class="btn btn-nav" onclick="tabswitcher('history-section'); loadhistory();">HISTORY</button>
 </nav>
 
 <nav id="unsenior-nav" class="nav-bar">

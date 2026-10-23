@@ -1,5 +1,4 @@
 import easyocr
-from pathlib import Path
 import os
 import cv2
 
@@ -37,10 +36,6 @@ def textextracter(imgpath: str):
         }]
 
     return dlist
-
-
-    pass
-
 
 
 def lowconfidencefilterer(dlist, threshold=0.3):

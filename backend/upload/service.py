@@ -7,14 +7,11 @@ validextensions = ['.png','.jpg','.jpeg','.gif','.bmp','.tif','.tiff','.webp']
 uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 
 
-
 def validate(file): #
 
     if '.' not in file: return False
 
     extension = '.'+file.split('.')[-1]
-
-
 
     return extension in validextensions
 
@@ -39,15 +36,4 @@ def save(file, name):
     with open(filepath, 'wb') as f:
         shutil.copyfileobj(file, f)
 
-
     return safefilename
-
-
-
-
-#uploaddirchecker()
-
-
-
-
-#print(idgenerator("hi.png"))

@@ -856,9 +856,10 @@ async  function handletaken() {
               body: JSON.stringify({ event_type: "taken" })
           });
 
-    // close the card and return to the senior home screen
+    // close the card and show the medication history so the senior sees it recorded
     closedetail();
-    tabswitcher("senior-home-section");
+    tabswitcher("history-section");
+    loadhistory();
 }
 
 async function loadusagesummary(cardid) {
@@ -951,6 +952,9 @@ function applymode(mode) {
     document.querySelectorAll(".unsenior-only").forEach(el => {el.style.display = mode == "unsenior" ? "" : "none";});
        document.querySelectorAll(".senior-only").forEach(el => {el.style.display = mode == "senior" ? "" : "none";});
 
+    // top-right toggle shows the view you can switch TO
+    const modetoggle = document.getElementById("mode-toggle");
+    if (modetoggle) modetoggle.textContent = (mode == "senior") ? "Caregiver View" : "Senior View";
 }
 
 function back() {
@@ -1076,7 +1080,6 @@ document.getElementById("identify-back").addEventListener("click", () => tabswit
 
 // mode switching (works from both the header button and the senior-home orb)
 document.getElementById("mode-toggle").addEventListener("click", switchmode);
-document.getElementById("toggle-orb").addEventListener("click", switchmode);
 
 // ===== Camera capture (live webcam) =====
 let camerastream = null;

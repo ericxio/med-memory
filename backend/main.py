@@ -26,7 +26,6 @@ from backend.usage.router import router as usage_router
 from backend.auth.router import router as authrouter
 
 
-
 uploaddirchecker()
 
 app.include_router(uploadrouter)
@@ -37,9 +36,7 @@ app.include_router(matchingrouter)
 app.include_router(usage_router)
 
 
-
 app.include_router(authrouter)
-
 
 
 @app.get("/")

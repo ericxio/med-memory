@@ -1,8 +1,6 @@
 from datetime import datetime
 from typing import Optional
 from backend.database import getconnection
-from .models import Createcard, Updatecard
-
 
 
 def createcard(user_id, card):

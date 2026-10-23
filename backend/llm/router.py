@@ -31,8 +31,6 @@ async def structurelabel(request: Structurelabelrequest):
     except Exception:
         raise HTTPException(502, detail="process failed")
 
-
-
     return result
 
 

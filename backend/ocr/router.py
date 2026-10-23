@@ -11,12 +11,9 @@ router = APIRouter()
 uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 
 
-
 class Ocrrequest(BaseModel):
 
     filename: str
-
-
 
 
 @router.post("/api/ocr")
@@ -36,7 +33,6 @@ async def runocr(request: Ocrrequest):
         raise HTTPException(500, "ocr failed: " + str(e))
 
 
-
     text = ""
     lines = 0
     totalconfidence = 0
@@ -47,7 +43,6 @@ async def runocr(request: Ocrrequest):
         totalconfidence += i['confidence']
 
     if len(text) > 0: text = text[:len(text)-1]
-
 
 
     result = {

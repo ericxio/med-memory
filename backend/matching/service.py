@@ -1,11 +1,9 @@
 from rapidfuzz import fuzz
 from backend.cards import service as cardservice
 from backend.ocr import service as ocrservice
-from backend.config import upload_dir
 from backend.config import ocrthreshold
 from pathlib import Path
 
-from backend.ocr.service import textextracter
 
 uploaddir = Path(__file__).parent.parent.parent / Path("uploads")
 threshold = 60
@@ -67,13 +65,6 @@ def findmatch(text, user_id):
 
     return message
 
-#     return
-#
-# a="the fintesgram pacert est is a mlti stage aerobiec capacit test that progresively gets more difficutl as ti continues     "
-# b="The FitnessGram Pacer test is a multistage aerobic capacity test that progressively gets more difficult as it continues. "
-#
-# print(similarity(a,b))
-#
 
 def matchbyimage(image, user_id):
     path = uploaddir / image

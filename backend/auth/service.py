@@ -8,13 +8,7 @@ def hashpassword(plain: str):
 def verifypassword(plain: str, hashed: str):
     return pwd.verify(plain, hashed)
 
-from datetime import datetime
 
-from sqlite3 import IntegrityError
-
-from backend.database import getconnection
-
-from datetime import datetime
 from sqlite3 import IntegrityError
 from backend.database import getconnection
 
@@ -64,7 +58,6 @@ def decodetoken(token:str):
 
         payload = jwt.decode(token, jwt_secret, algorithms=[jwt_algorithm])
         return int(payload["sub"])
-
 
     except:
         return

@@ -4,7 +4,6 @@ from . import service
 router = APIRouter()
 
 
-
 @router.post("/api/upload")
 async def upload(file: UploadFile = File(...)):
 
@@ -13,8 +12,6 @@ async def upload(file: UploadFile = File(...)):
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-
 
 
     json = {"fileid": fileid, "message": "success"}
